@@ -8,11 +8,22 @@ DATASET_PAGE_URL = "https://donnees.montreal.ca/dataset/cyclistes"
 RESOURCE_ID = "a8e463ab-d334-4714-81d5-8da0310d80c0"
 
 RAW_DATA_PATH = Path("cyclistes.csv")
+VIZ1_OUTPUT_PATH = Path("map_viz1.csv")
 VIZ2_OUTPUT_PATH = Path("heatmap_viz2.csv")
 API_HEADERS = {"User-Agent": "Mozilla/5.0"}
 LOCAL_TIMEZONE = "America/Montreal"
 
-REQUIRED_COLUMNS = {"agg_code", "instance", "arrondissement", "periode", "volume"}
+REQUIRED_COLUMNS = {
+    "agg_code",
+    "instance",
+    "longitude",
+    "latitude",
+    "arrondissement",
+    "rue_1",
+    "rue_2",
+    "periode",
+    "volume",
+}
 
 SEASON_MAP = {
     12: "Winter", 1: "Winter", 2: "Winter",
@@ -59,7 +70,11 @@ def download_hourly_data(output_path: Path = RAW_DATA_PATH, batch_size: int = 50
         "_id",
         "agg_code",
         "instance",
+        "longitude",
+        "latitude",
         "arrondissement",
+        "rue_1",
+        "rue_2",
         "periode",
         "volume",
     ]
@@ -175,6 +190,89 @@ def _mean_volume_by_group(site_hourly: pd.DataFrame, group_cols: list[str]) -> p
     )
 
 
+def build_viz1_map_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
+    df = df_hourly.copy()
+
+    df = df[df["agg_code"] == "h"].copy()
+
+    df["periode"] = pd.to_datetime(df["periode"], utc=True, errors="coerce")
+    df["periode"] = df["periode"].dt.tz_convert(LOCAL_TIMEZONE)
+    df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
+    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
+    df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
+
+    text_cols = ["instance", "arrondissement", "rue_1", "rue_2"]
+    for col in text_cols:
+        df[col] = df[col].astype("string").str.strip()
+
+    df = df.dropna(
+        subset=[
+            "periode",
+            "volume",
+            "longitude",
+            "latitude",
+            "instance",
+            "arrondissement",
+            "rue_1",
+            "rue_2",
+        ]
+    )
+
+    df = df[
+        (df["volume"] >= 0)
+        & (df["arrondissement"] != "")
+        & (df["instance"] != "")
+    ].copy()
+
+    df["date"] = df["periode"].dt.date
+
+    site_daily = (
+        df.groupby(
+            [
+                "instance",
+                "arrondissement",
+                "rue_1",
+                "rue_2",
+                "longitude",
+                "latitude",
+                "date",
+            ],
+            as_index=False,
+        )["volume"]
+        .sum()
+    )
+
+    site_summary = (
+        site_daily.groupby(
+            [
+                "instance",
+                "arrondissement",
+                "rue_1",
+                "rue_2",
+                "longitude",
+                "latitude",
+            ],
+            as_index=False,
+        )
+        .agg(
+            mean_daily_volume=("volume", "mean"),
+            total_volume=("volume", "sum"),
+            active_days=("date", "nunique"),
+        )
+    )
+
+    site_summary["corridor"] = (
+        site_summary["rue_1"].astype(str)
+        + " / "
+        + site_summary["rue_2"].astype(str)
+    )
+
+    return site_summary.sort_values(
+        "mean_daily_volume",
+        ascending=False,
+    ).reset_index(drop=True)
+
+
 def build_viz2_heatmap_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
     """
     Builds the hour x day heatmap dataset for Visualization 2.
@@ -255,6 +353,11 @@ def build_viz2_heatmap_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     raw_data = load_raw_data()
+
+    viz1_map = build_viz1_map_data(raw_data)
+    viz1_map.to_csv(VIZ1_OUTPUT_PATH, index=False)
+    print(f"Wrote {len(viz1_map)} rows to {VIZ1_OUTPUT_PATH}")
+
     viz2_heatmap = build_viz2_heatmap_data(raw_data)
     viz2_heatmap.to_csv(VIZ2_OUTPUT_PATH, index=False)
     print(f"Wrote {len(viz2_heatmap)} rows to {VIZ2_OUTPUT_PATH}")

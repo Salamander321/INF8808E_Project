@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 from dash import Dash, Input, Output, dcc, html
-
+from viz.viz1_map import make_viz1_figure
 
 HEATMAP_DATA_PATH = Path("heatmap_viz2.csv")
 
@@ -229,7 +229,27 @@ app.title = "Montreal Cycling Dashboard"
 
 app.layout = html.Main(
     style=PAGE_STYLE,
+
     children=[
+        html.Div(
+            style={**CARD_STYLE, "marginBottom": "24px"},
+            children=[
+                html.H1(
+                    "Cycling activity across Montréal",
+                    style={"margin": "0 0 6px", "fontSize": "28px"},
+                ),
+                html.P(
+                    "Mean daily cyclist volume per counter by borough, with counting-site bubbles.",
+                    style={**NOTE_STYLE, "margin": "0 0 12px"},
+                ),
+                dcc.Graph(
+                    id="viz1-map",
+                    figure=make_viz1_figure(show_bubbles=True),
+                    config={"displayModeBar": False, "responsive": True},
+                ),
+            ],
+        ),
+
         html.Div(
             style=CARD_STYLE,
             children=[

@@ -1,0 +1,49 @@
+instance,arrondissement,rue_1,rue_2,longitude,latitude,mean_daily_volume,total_volume,active_days,corridor
+det-02047-01,Ville-Marie,Berri,de la Gauchetiere,-73.556138,45.512964,2208.790087463557,757615,343,Berri / de la Gauchetiere
+det-00709-01,Le Plateau-Mont-Royal,Papineau,Rachel,-73.56949746,45.53055038,1421.6153846153845,314177,221,Papineau / Rachel
+det-00336-01,Ville-Marie,Maisonneuve,Saint-Marc,-73.581329,45.493845,1288.5814606741574,458735,356,Maisonneuve / Saint-Marc
+det-00385-01,Ville-Marie,Canadiens-de-Montréal,Peel,-73.56921,45.498135,1141.7554945054944,415599,364,Canadiens-de-Montréal / Peel
+det-00402-01,Ville-Marie,Peel,Saint-Antoine,-73.565945,45.496564,869.6778846153846,180893,208,Peel / Saint-Antoine
+det-00467-01,Ville-Marie,Saint-Urbain,Viger,-73.560055,45.506221,746.4120879120879,271694,364,Saint-Urbain / Viger
+det-00421-01,Ville-Marie,Peel,René-Lévesque,-73.57081,45.499119,728.3137254901961,260008,357,Peel / René-Lévesque
+det-00402-02,Ville-Marie,Peel,Saint-Antoine,-73.566559,45.496712,724.5906593406594,263751,364,Peel / Saint-Antoine
+det-01725-01,Le Sud-Ouest,Gaétan-Laberge,Sortie A-15 Sud,-73.56046209,45.4712685,513.109649122807,116989,228,Gaétan-Laberge / Sortie A-15 Sud
+det-01194-02,Ahuntsic-Cartierville,Lajeunesse,Legendre,-73.645547,45.548574,509.73816155988857,182996,359,Lajeunesse / Legendre
+det-00401-02,Le Sud-Ouest,Ottawa,Peel,-73.558396,45.493701,491.0631868131868,178747,364,Ottawa / Peel
+det-00335-01,Ville-Marie,Maisonneuve,Saint-Laurent,-73.564849,45.510961,472.6363636363636,20796,44,Maisonneuve / Saint-Laurent
+det-00789-01,Rosemont–La Petite-Patrie,Bourbonnière,Sherbrooke,-73.55484615,45.55174068,381.609649122807,87007,228,Bourbonnière / Sherbrooke
+det-01364-01,Le Sud-Ouest,Charlevoix,Wellington,-73.561977,45.473739,345.20118343195264,116678,338,Charlevoix / Wellington
+det-00401-01,Le Sud-Ouest,Ottawa,Peel,-73.558916,45.493823,302.5934065934066,110144,364,Ottawa / Peel
+det-00399-01,Ville-Marie,Notre-Dame,Peel,-73.563905,45.495661,302.41628959276017,66834,221,Notre-Dame / Peel
+det-00249-04,Le Sud-Ouest,Rose-de-Lima,Saint-Antoine,-73.585369,45.482143,289.7826086956522,6665,23,Rose-de-Lima / Saint-Antoine
+det-00399-02,Ville-Marie,Notre-Dame,Peel,-73.56398,45.495843,260.3783783783784,57804,222,Notre-Dame / Peel
+det-01452-01,Rosemont–La Petite-Patrie,Jean-Talon,Normanville,-73.61071833,45.54389198,223.48214285714286,37545,168,Jean-Talon / Normanville
+det-00967-13,Mercier–Hochelaga-Maisonneuve,Boucherville,Notre-Dame,-73.509491,45.583635,190.14785992217898,48868,257,Boucherville / Notre-Dame
+det-00118-02,Côte-des-Neiges–Notre-Dame-de-Grâce,Girouard,Terrebonne,-73.62487067,45.47833835,176.40528634361235,40044,227,Girouard / Terrebonne
+det-00077-01,Côte-des-Neiges–Notre-Dame-de-Grâce,Bourret,Décarie inter. Est,-73.63901615,45.488279,162.87603305785123,19708,121,Bourret / Décarie inter. Est
+det-01173-01,Ahuntsic-Cartierville,Berri,Louvain,-73.650118,45.549271,162.6657381615599,58397,359,Berri / Louvain
+det-01269-01,Ahuntsic-Cartierville,Christophe-Colomb,Henri-Bourassa,-73.661524,45.562217,138.98932384341637,39056,281,Christophe-Colomb / Henri-Bourassa
+det-00970-01,Mercier–Hochelaga-Maisonneuve,Notre-Dame,Curatteau,-73.508203,45.585309,131.4513618677043,33783,257,Notre-Dame / Curatteau
+det-13259-03,Saint-Laurent,Côte-de-Liesse,Lucerne,-73.663324,45.508068,119.0,11067,93,Côte-de-Liesse / Lucerne
+det-13259-02,Saint-Laurent,Côte-de-Liesse,Lucerne,-73.663422,45.507889,116.92129629629629,25255,216,Côte-de-Liesse / Lucerne
+det-01487-03,Le Sud-Ouest,Nazareth,William,-73.559387,45.496943,97.89285714285714,35633,364,Nazareth / William
+det-01026-01,Villeray–Saint-Michel–Parc-Extension,Iberville,Villeray,-73.60896466,45.55669933,95.11737089201878,20260,213,Iberville / Villeray
+det-01020-01,Villeray–Saint-Michel–Parc-Extension,Iberville,Jean-Talon,-73.60202333,45.55361831,93.47161572052401,21405,229,Iberville / Jean-Talon
+det-01454-01,Côte-des-Neiges–Notre-Dame-de-Grâce,Darlington,Goyer,-73.63049393,45.50985432,90.77777777777777,817,9,Darlington / Goyer
+det-00974-01,Mercier–Hochelaga-Maisonneuve,Haig,Notre-Dame,-73.514824,45.577387,88.73351648351648,32299,364,Haig / Notre-Dame
+det-00976-02,Mercier–Hochelaga-Maisonneuve,Honoré-Beaugrand,Notre-Dame,-73.508827,45.588384,69.31640625,17745,256,Honoré-Beaugrand / Notre-Dame
+det-00118-01,Côte-des-Neiges–Notre-Dame-de-Grâce,Girouard,Terrebonne,-73.62487067,45.47833835,66.22466960352423,15033,227,Girouard / Terrebonne
+det-01340-02,Rivière-des-Prairies–Pointe-aux-Trembles,Montigny,Saint-Jean-Baptiste,-73.505879,45.642491,59.96621621621622,8875,148,Montigny / Saint-Jean-Baptiste
+det-09500-01,Montréal-Nord,Prieur,Saint-Michel,-73.64629999,45.58138196,56.11764705882353,1908,34,Prieur / Saint-Michel
+det-17649-01,Lachine,25 e Avenue,Victoria,-73.68651791,45.43582657,50.72222222222222,11869,234,25 e Avenue / Victoria
+det-00257-02,Le Sud-Ouest,Saint-Jacques,Seigneurs,-73.572125,45.489232,42.394520547945206,15474,365,Saint-Jacques / Seigneurs
+det-00249-03,Le Sud-Ouest,Rose-de-Lima,Saint-Antoine,-73.585021,45.482195,35.56521739130435,818,23,Rose-de-Lima / Saint-Antoine
+det-01340-01,Rivière-des-Prairies–Pointe-aux-Trembles,Montigny,Saint-Jean-Baptiste,-73.505879,45.642491,24.7972972972973,3670,148,Montigny / Saint-Jean-Baptiste
+det-00523-01,Ville-Marie,Côte-Sainte-Catherine,Mont-Royal,-73.590263,45.51577934,24.68717948717949,4814,195,Côte-Sainte-Catherine / Mont-Royal
+det-08888-01,Montréal-Nord,Henri-Bourassa,Saint-Vital,-73.647116,45.590608,23.262295081967213,2838,122,Henri-Bourassa / Saint-Vital
+det-08888-02,Montréal-Nord,Henri-Bourassa,Saint-Vital,-73.646846,45.590333,19.516393442622952,2381,122,Henri-Bourassa / Saint-Vital
+det-00268-03,Rivière-des-Prairies–Pointe-aux-Trembles,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,-73.61126282,45.62989831,19.46511627906977,3348,172,Louis-Hippolyte-La-Fontaine / Perras Inter. Est
+det-10471-01,Montréal-Nord,Amos d',Jean-Meunier,-73.62223853,45.6041431,10.68995633187773,2448,229,Amos d' / Jean-Meunier
+det-00523-02,Ville-Marie,Côte-Sainte-Catherine,Mont-Royal,-73.590263,45.51577934,8.923076923076923,1740,195,Côte-Sainte-Catherine / Mont-Royal
+det-00717-01,Ville-Marie,De Lorimier/Viger,Notre-Dame,-73.545473,45.523579,8.294943820224718,2953,356,De Lorimier/Viger / Notre-Dame
+det-00268-02,Rivière-des-Prairies–Pointe-aux-Trembles,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,-73.61126282,45.62989831,2.4444444444444446,44,18,Louis-Hippolyte-La-Fontaine / Perras Inter. Est
