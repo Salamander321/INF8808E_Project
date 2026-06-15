@@ -1,300 +1,218 @@
-import math
-from pathlib import Path
+# """
+# app.py — Single Dash app for the Montréal Cycling dashboard.
 
-import pandas as pd
-import plotly.graph_objects as go
-from dash import Dash, Input, Output, dcc, html
+# INF8808 structure: this is the one entry point. Each visualization lives in
+# its own figure-only module (scatter.py, heatmap.py, ...) that exposes pure
+# functions. This file builds ONE layout with three tabs (Where / When / What)
+# and registers ALL callbacks on the single `app` object.
+
+# Run via the failsafe wrapper:   python server.py   -> http://127.0.0.1:8050
+# (or directly:                   python app.py)
+# """
+
+from json import load
+
+import dash
+from dash import Input, Output, dcc, html
+import load_data
+
+import visualizations.scatter as scatter            
+import visualizations.heatmap as heatmap          
+
+           
+_HAS_HEATMAP = True
+
+try:
+    import visualizations.choropleth as choropleth         #
+    _HAS_CHOROPLETH = True
+except Exception:             # noqa: BLE001
+    _HAS_CHOROPLETH = False
+
+try:
+    import visualizations.diverging as diverging         
+    _HAS_DIVERGING = True
+except Exception:             # noqa: BLE001
+    _HAS_DIVERGING = False
 
 
-HEATMAP_DATA_PATH = Path("heatmap_viz2.csv")
+print(_HAS_HEATMAP)
 
-DAY_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-HOUR_ORDER = list(range(24))
-HOUR_LABELS = [f"{hour:02d}:00" for hour in HOUR_ORDER]
-SEASON_ORDER = ["All year", "Winter", "Spring", "Summer", "Fall"]
+# --------------------------------------------------------------------------
+# Data — loaded once at startup, shared across the app.
+# --------------------------------------------------------------------------
+SCATTER_DF = load_data.load_scatter_data()
+BOUNDS = scatter.get_bounds(SCATTER_DF)
 
+
+HEATMAP_DF = load_data.load_heatmap_data()
+
+# --------------------------------------------------------------------------
+# Styling
+# --------------------------------------------------------------------------
 PAGE_STYLE = {
-    "maxWidth": "1180px",
-    "margin": "32px auto",
-    "padding": "0 20px",
-    "fontFamily": "Inter, Arial, sans-serif",
-    "color": "#1f2933",
+    "maxWidth": "1280px", "margin": "24px auto", "padding": "0 20px",
+    "fontFamily": "Inter, Arial, sans-serif", "color": "#1f2933",
 }
-
-CARD_STYLE = {
-    "background": "#ffffff",
-    "border": "1px solid #d8dee7",
-    "borderRadius": "8px",
-    "padding": "24px",
-    "boxShadow": "0 1px 2px rgba(15, 23, 42, 0.06)",
-}
-
-CONTROL_ROW_STYLE = {
-    "display": "flex",
-    "gap": "16px",
-    "flexWrap": "wrap",
-    "alignItems": "end",
-    "margin": "18px 0",
-}
-
-CONTROL_STYLE = {
-    "display": "grid",
-    "gap": "6px",
-    "minWidth": "240px",
-}
-
-NOTE_STYLE = {
-    "color": "#5f6b7a",
-    "fontSize": "14px",
-    "lineHeight": "1.5",
+NOTE = {"color": "#5f6b7a", "fontSize": "14px"}
+PLACEHOLDER = {
+    "display": "flex", "alignItems": "center", "justifyContent": "center",
+    "height": "320px", "border": "1px dashed #c4ccd6", "borderRadius": "8px",
+    "color": "#5f6b7a", "background": "#fafbfc", "textAlign": "center",
 }
 
 
-def load_heatmap_data() -> pd.DataFrame:
-    if not HEATMAP_DATA_PATH.exists():
-        return pd.DataFrame()
-
-    data = pd.read_csv(HEATMAP_DATA_PATH)
-    data = data.dropna(subset=["arrondissement", "season", "day", "hour", "mean_volume"])
-    data["hour"] = pd.to_numeric(data["hour"], errors="coerce")
-    data["mean_volume"] = pd.to_numeric(data["mean_volume"], errors="coerce")
-    data = data.dropna(subset=["hour", "mean_volume"])
-    data["hour"] = data["hour"].astype(int)
-    return data
+def placeholder(label: str) -> html.Div:
+    return html.Div(style=PLACEHOLDER, children=html.Div([
+        html.Div(f"{label} is not built yet.", style={"fontWeight": "700"}),
+        html.Div("Add its module and it will appear here.", style=NOTE),
+    ]))
 
 
-def get_borough_options(data: pd.DataFrame) -> list[dict[str, str]]:
-    if data.empty:
-        return [{"label": "All Montréal", "value": "All Montréal"}]
+# --------------------------------------------------------------------------
+# App
+# --------------------------------------------------------------------------
+app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app.title = "Montréal Cycling Dashboard"
 
-    boroughs = sorted(data["arrondissement"].dropna().unique())
-    ordered = ["All Montréal"] + [borough for borough in boroughs if borough != "All Montréal"]
-    return [{"label": borough, "value": borough} for borough in ordered]
+GRAPH_CONFIG = {"displayModeBar": False, "responsive": True}
 
 
-def get_season_options(data: pd.DataFrame) -> list[dict[str, str]]:
-    if data.empty:
-        seasons = SEASON_ORDER
+# ---- Tab builders --------------------------------------------------------
+def where_tab() -> html.Div:
+    if _HAS_CHOROPLETH:
+        content = dcc.Graph(id="vis1-choropleth",
+                            figure=choropleth.get_figure(),  # adjust to its API
+                            config=GRAPH_CONFIG)
     else:
-        available = set(data["season"].dropna().unique())
-        seasons = [season for season in SEASON_ORDER if season in available]
-
-    return [{"label": season, "value": season} for season in seasons]
-
-
-def round_up_scale_max(value: float) -> float:
-    """Rounds a color scale max upward with readable, tighter breaks.
-
-    Examples:
-    - 18 -> 20
-    - 68.8 -> 70
-    - 138.4 -> 150
-    - 180 -> 200
-    - 690.5 -> 700
-    """
-    if value <= 0 or not math.isfinite(value):
-        return 1
-
-    magnitude = 10 ** math.floor(math.log10(value))
-    normalized = value / magnitude
-    nice_steps = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 9, 10]
-
-    for step in nice_steps:
-        if normalized <= step:
-            return step * magnitude
-
-    return 10 * magnitude
+        content = placeholder("Vis 1 — choropleth + bubble overlay")
+    return html.Div(style={"padding": "20px 0"}, children=[
+        html.P("Geographic distribution of cycling activity across the island.",
+               style=NOTE),
+        content,
+    ])
 
 
-def make_empty_figure(message: str) -> go.Figure:
-    fig = go.Figure()
-    fig.add_annotation(
-        text=message,
-        x=0.5,
-        y=0.5,
-        xref="paper",
-        yref="paper",
-        showarrow=False,
-        font={"size": 16, "color": "#5f6b7a"},
-        align="center",
-    )
-    fig.update_layout(
-        height=620,
-        margin={"l": 80, "r": 40, "t": 80, "b": 50},
-        xaxis={"visible": False},
-        yaxis={"visible": False},
-        paper_bgcolor="#ffffff",
-        plot_bgcolor="#ffffff",
-    )
-    return fig
+def when_tab() -> html.Div:
+    if _HAS_HEATMAP:
+        heatmap_block = html.Div([
+            html.Div(style={"display": "flex", "gap": "16px",
+                            "flexWrap": "wrap", "margin": "12px 0"}, children=[
+                html.Label([html.Span("Season ", style={"fontWeight": "700"}),
+                            dcc.Dropdown(id="hm-season",
+                                         options=heatmap_season_options(),
+                                         value="All year", clearable=False,
+                                         style={"minWidth": "220px"})]),
+                html.Label([html.Span("Borough ", style={"fontWeight": "700"}),
+                            dcc.Dropdown(id="hm-borough",
+                                         options=heatmap_borough_options(),
+                                         value="All Montréal", clearable=False,
+                                         style={"minWidth": "220px"})]),
+            ]),
+            dcc.Graph(id="vis2-heatmap", config=GRAPH_CONFIG),
+        ])
+    else:
+        heatmap_block = placeholder("Seasonal Heatmap")
 
-
-def make_heatmap_figure(data: pd.DataFrame, selected_season: str, selected_borough: str) -> go.Figure:
-    if data.empty:
-        return make_empty_figure(
-            "Run python preprocess.py first to generate heatmap_viz2.csv."
-        )
-
-    filtered = data[
-        (data["season"] == selected_season)
-        & (data["arrondissement"] == selected_borough)
-    ]
-
-    if filtered.empty:
-        return make_empty_figure(
-            f"No data available for {selected_borough} / {selected_season}."
-        )
-
-    rows_by_cell = {
-        (int(row.hour), row.day): row
-        for row in filtered.itertuples(index=False)
-    }
-
-    z_values = []
-    hover_text = []
-
-    for hour in HOUR_ORDER:
-        z_row = []
-        text_row = []
-        for day in DAY_ORDER:
-            row = rows_by_cell.get((hour, day))
-            if row is None:
-                z_row.append(None)
-                text_row.append(
-                    "<br>".join(
-                        [
-                            f"Borough: {selected_borough}",
-                            f"Season: {selected_season}",
-                            f"Day: {day}",
-                            f"Hour: {hour:02d}:00",
-                            "No data available",
-                        ]
-                    )
-                )
-            else:
-                z_row.append(float(row.mean_volume))
-                sample_size = getattr(row, "sample_size", None)
-                text = [
-                    f"Borough: {selected_borough}",
-                    f"Season: {selected_season}",
-                    f"Day: {day}",
-                    f"Hour: {hour:02d}:00",
-                    f"Mean hourly volume per counter: {float(row.mean_volume):.1f} cyclists",
-                ]
-                if sample_size is not None and pd.notna(sample_size):
-                    text.append(f"Counter-hour observations: {int(sample_size)}")
-                text_row.append("<br>".join(text))
-        z_values.append(z_row)
-        hover_text.append(text_row)
-
-    max_value = round_up_scale_max(float(filtered["mean_volume"].max()))
-
-    fig = go.Figure(
-        data=go.Heatmap(
-            x=DAY_ORDER,
-            y=HOUR_LABELS,
-            z=z_values,
-            text=hover_text,
-            hovertemplate="%{text}<extra></extra>",
-            hoverongaps=True,
-            colorscale="YlOrRd",
-            zmin=0,
-            zmax=max_value,
-            colorbar={"title": f"Mean hourly volume<br>scale max: {max_value:g}"},
-        )
+    diverging_block = (
+        dcc.Graph(id="vis3-diverging", figure=diverging.get_figure(),
+                  config=GRAPH_CONFIG)
+        if _HAS_DIVERGING else placeholder("Vis 3 — diverging bar chart")
     )
 
-    fig.update_layout(
-        title={
-            "text": "Hour x day heatmap - mean cyclist volume",
-            "x": 0,
-            "xanchor": "left",
-        },
-        height=620,
-        margin={"l": 80, "r": 40, "t": 80, "b": 50},
-        paper_bgcolor="#ffffff",
-        plot_bgcolor="#ffffff",
-        font={"color": "#1f2933"},
-        xaxis={"side": "top", "fixedrange": True},
-        yaxis={"title": "Hour of day", "autorange": "reversed", "fixedrange": True},
-    )
-
-    return fig
-
-
-heatmap_data = load_heatmap_data()
-
-app = Dash(__name__)
-app.title = "Montreal Cycling Dashboard"
-
-app.layout = html.Main(
-    style=PAGE_STYLE,
-    children=[
-        html.Div(
-            style=CARD_STYLE,
-            children=[
-                html.H1(
-                    "Cycling activity by hour and day",
-                    style={"margin": "0 0 6px", "fontSize": "28px"},
-                ),
-                html.P(
-                    "Mean hourly cyclist volume per counter, filtered by season and borough.",
-                    style={**NOTE_STYLE, "margin": "0"},
-                ),
-                html.Div(
-                    style=CONTROL_ROW_STYLE,
+    return html.Div(style={"padding": "20px 0", "display": "grid", "gap": "28px"},
                     children=[
-                        html.Label(
-                            style=CONTROL_STYLE,
-                            children=[
-                                html.Span("Season", style={"fontWeight": "700", "fontSize": "14px"}),
-                                dcc.Dropdown(
-                                    id="season-dropdown",
-                                    options=get_season_options(heatmap_data),
-                                    value="All year",
-                                    clearable=False,
-                                ),
-                            ],
-                        ),
-                        html.Label(
-                            style=CONTROL_STYLE,
-                            children=[
-                                html.Span("Borough", style={"fontWeight": "700", "fontSize": "14px"}),
-                                dcc.Dropdown(
-                                    id="borough-dropdown",
-                                    options=get_borough_options(heatmap_data),
-                                    value="All Montréal",
-                                    clearable=False,
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                dcc.Graph(
-                    id="viz2-heatmap",
-                    config={"displayModeBar": False, "responsive": True},
-                ),
-                html.P(
-                    "Darker cells indicate higher average cyclist volume per counter. "
-                    "Weekday activity can reveal commuting peaks, while weekend activity helps "
-                    "identify recreational cycling patterns. The season and borough filters allow "
-                    "planners to compare how temporal cycling behavior changes across the network.",
-                    style={**NOTE_STYLE, "marginTop": "12px"},
-                ),
-            ],
-        )
-    ],
-)
+        html.P("Usage patterns across hourly, daily, and seasonal dimensions.",
+               style=NOTE),
+        html.Div([html.H3("Seasonal Heatmap",
+                          style={"margin": "0 0 8px"}), heatmap_block]),
+        html.Div([html.H3("Vis 3 — Directional peak-hour flow",
+                          style={"margin": "0 0 8px"}), diverging_block]),
+    ])
+
+
+def what_tab() -> html.Div:
+    return html.Div(style={"padding": "20px 0"}, children=[
+        html.P("Corridors combining high volume, peak demand, and year-round "
+               "usage.", style=NOTE),
+        dcc.Graph(id="vis4-scatter", config=GRAPH_CONFIG),
+        html.Div(style={"display": "flex", "gap": "40px",
+                        "padding": "10px 0 0"}, children=[
+            html.Div(style={"flex": 1}, children=[
+                html.Label("Mean cyclist volume threshold",
+                           style={"fontWeight": "700"}),
+                dcc.Slider(id="vol-slider",
+                           min=BOUNDS["vol_min"], max=BOUNDS["vol_max"],
+                           value=BOUNDS["vol_default"], marks=None,
+                           step=max(1, round((BOUNDS["vol_max"] - BOUNDS["vol_min"]) / 200)),
+                           tooltip={"placement": "bottom", "always_visible": True,
+                                    "template": "{value:,.0f}"}),
+            ]),
+            html.Div(style={"flex": 1}, children=[
+                html.Label("Winter retention threshold",
+                           style={"fontWeight": "700"}),
+                dcc.Slider(id="ret-slider",
+                           min=BOUNDS["ret_min"], max=BOUNDS["ret_max"],
+                           value=BOUNDS["ret_default"], step=0.01, marks=None,
+                           tooltip={"placement": "bottom", "always_visible": True,
+                                    "template": "{value:.2f}"}),
+            ]),
+        ]),
+    ])
+
+
+# ---- Heatmap dropdown options (only if module present) -------------------
+def heatmap_season_options():
+    return heatmap.get_season_options(HEATMAP_DF) \
+        if hasattr(heatmap, "get_season_options") else []
+
+
+def heatmap_borough_options():
+    return heatmap.get_borough_options(HEATMAP_DF) \
+        if hasattr(heatmap, "get_borough_options") else []
+
+
+# --------------------------------------------------------------------------
+# Layout
+# --------------------------------------------------------------------------
+app.layout = html.Main(style=PAGE_STYLE, children=[
+    html.H1("Evidence-Based Insights for Montréal's Cycling Network",
+            style={"fontSize": "26px", "margin": "0 0 4px"}),
+    html.P("INF8808E - Team1", style={**NOTE, "margin": "0 0 12px"}),
+    dcc.Tabs(id="main-tabs", value="where", children=[
+        dcc.Tab(label="Where?", value="where"),
+        dcc.Tab(label="When?", value="when"),
+        dcc.Tab(label="What?", value="what"),
+    ]),
+    html.Div(id="tab-content"),
+])
+
+
+# --------------------------------------------------------------------------
+# Callbacks — all registered on the single app
+# --------------------------------------------------------------------------
+@app.callback(Output("tab-content", "children"), Input("main-tabs", "value"))
+def render_tab(tab):
+    return {"where": where_tab, "when": when_tab, "what": what_tab}[tab]()
 
 
 @app.callback(
-    Output("viz2-heatmap", "figure"),
-    Input("season-dropdown", "value"),
-    Input("borough-dropdown", "value"),
+    Output("vis4-scatter", "figure"),
+    Input("vol-slider", "value"),
+    Input("ret-slider", "value"),
 )
-def update_heatmap(selected_season: str, selected_borough: str) -> go.Figure:
-    return make_heatmap_figure(heatmap_data, selected_season, selected_borough)
+def update_scatter(vol_thresh, ret_thresh):
+    return scatter.build_figure(SCATTER_DF, vol_thresh, ret_thresh)
+
+
+@app.callback(
+        Output("vis2-heatmap", "figure"),
+        Input("hm-season", "value"),
+        Input("hm-borough", "value"),
+)
+def update_heatmap(season, borough):
+    return heatmap.make_heatmap_figure(
+        HEATMAP_DF, season, borough)
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(host="127.0.0.1", port=8050, debug=True)
