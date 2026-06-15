@@ -242,6 +242,15 @@ app.layout = html.Main(
                     "Mean daily cyclist volume per counter by borough, with counting-site bubbles.",
                     style={**NOTE_STYLE, "margin": "0 0 12px"},
                 ),
+                dcc.Checklist(
+                    id="viz1-bubble-toggle",
+                    options=[
+                        {"label": " Show counting-site bubbles", "value": "show_bubbles"},
+                    ],
+                    value=["show_bubbles"],
+                    style={"margin": "12px 0"},
+                    inputStyle={"marginRight": "6px"},
+                ),
                 dcc.Graph(
                     id="viz1-map",
                     figure=make_viz1_figure(show_bubbles=True),
@@ -306,6 +315,14 @@ app.layout = html.Main(
     ],
 )
 
+
+@app.callback(
+    Output("viz1-map", "figure"),
+    Input("viz1-bubble-toggle", "value"),
+)
+def update_viz1_map(toggle_values: list[str]) -> go.Figure:
+    show_bubbles = "show_bubbles" in toggle_values
+    return make_viz1_figure(show_bubbles=show_bubbles)
 
 @app.callback(
     Output("viz2-heatmap", "figure"),
