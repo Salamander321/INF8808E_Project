@@ -10,9 +10,18 @@ X_COL = "mean_volume"
 # Figure builder
 # --------------------------------------------------------------------------
 PALETTE = [
-    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
-    "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#aec7e8", "#ffbb78",
-    "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d2", "#dbdb8d",
+    "#1f77b4",  # blue
+    "#d62728",  # red
+    "#2ca02c",  # green
+    "#9467bd",  # purple
+    "#ff7f0e",  # orange
+    "#8c564b",  # brown
+    "#e377c2",  # pink
+    "#17becf",  # cyan
+    "#bcbd22",  # olive
+    "#7f7f7f",  # grey
+    "#393b79",  # indigo
+    "#843c39",  # dark red-brown
 ]
 SIZE_MIN, SIZE_MAX = 8, 46  # marker diameter range (px)
 
@@ -146,10 +155,10 @@ def build_figure(df: pd.DataFrame, vol_thresh: float, ret_thresh: float) -> go.F
 def get_bounds(df: pd.DataFrame) -> dict:
     """Slider min/max/default for the two thresholds, derived from the data."""
     return {
-        "vol_min": float(df[X_COL].min()),
+        "vol_min": float(0),  # always allow zero as a minimum
         "vol_max": float(df[X_COL].max()),
         "vol_default": float(df[X_COL].median()),
-        "ret_min": float(df["winter_retention"].min()),
+        "ret_min": float(0),  # always allow zero as a minimum
         "ret_max": float(1.5),
         "ret_default": float(df["winter_retention"].median()),
     }

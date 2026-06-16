@@ -1,0 +1,47 @@
+instance,arrondissement,rue_1,rue_2,longitude,latitude,mean_daily_volume,total_volume,active_days,corridor
+det-02047-01,Ville-Marie,Berri,de la Gauchetiere,-73.556138,45.512964,2124.6625766871166,692640,326,Berri / de la Gauchetiere
+det-00336-01,Ville-Marie,Maisonneuve,Saint-Marc,-73.581329,45.493845,1221.6637168141592,414144,339,Maisonneuve / Saint-Marc
+det-00709-01,Le Plateau-Mont-Royal,Papineau,Rachel,-73.56949746,45.53055038,1139.799019607843,232519,204,Papineau / Rachel
+det-00385-01,Ville-Marie,Canadiens-de-Montréal,Peel,-73.56921,45.498135,1095.314121037464,380074,347,Canadiens-de-Montréal / Peel
+det-00402-01,Ville-Marie,Peel,Saint-Antoine,-73.565945,45.496564,835.3455497382199,159551,191,Peel / Saint-Antoine
+det-00421-01,Ville-Marie,Peel,René-Lévesque,-73.57081,45.499119,703.6294117647059,239234,340,Peel / René-Lévesque
+det-00467-01,Ville-Marie,Saint-Urbain,Viger,-73.560055,45.506221,701.1325648414986,243293,347,Saint-Urbain / Viger
+det-00402-02,Ville-Marie,Peel,Saint-Antoine,-73.566559,45.496712,687.1440922190202,238439,347,Peel / Saint-Antoine
+det-00335-01,Ville-Marie,Maisonneuve,Saint-Laurent,-73.564849,45.510961,576.1111111111111,15555,27,Maisonneuve / Saint-Laurent
+det-01194-02,Ahuntsic-Cartierville,Lajeunesse,Legendre,-73.645547,45.548574,483.7543859649123,165444,342,Lajeunesse / Legendre
+det-00401-02,Le Sud-Ouest,Ottawa,Peel,-73.558396,45.493701,465.95677233429393,161687,347,Ottawa / Peel
+det-01725-01,Le Sud-Ouest,Gaétan-Laberge,Sortie A-15 Sud,-73.56046209,45.4712685,375.0047393364929,79126,211,Gaétan-Laberge / Sortie A-15 Sud
+det-01364-01,Le Sud-Ouest,Charlevoix,Wellington,-73.561977,45.473739,322.69470404984423,103585,321,Charlevoix / Wellington
+det-00789-01,Rosemont–La Petite-Patrie,Bourbonnière,Sherbrooke,-73.55484615,45.55174068,305.6777251184834,64498,211,Bourbonnière / Sherbrooke
+det-00401-01,Le Sud-Ouest,Ottawa,Peel,-73.558916,45.493823,289.9279538904899,100605,347,Ottawa / Peel
+det-00399-01,Le Sud-Ouest,Notre-Dame,Peel,-73.56298671,45.49541721,239.4313725490196,48844,204,Notre-Dame / Peel
+det-00399-02,Le Sud-Ouest,Notre-Dame,Peel,-73.56298671,45.49541721,196.71219512195123,40326,205,Notre-Dame / Peel
+det-00967-13,Mercier–Hochelaga-Maisonneuve,Boucherville,Notre-Dame,-73.509491,45.583635,187.4625,44991,240,Boucherville / Notre-Dame
+det-01452-01,Rosemont–La Petite-Patrie,Jean-Talon,Normanville,-73.61071833,45.54389198,185.72185430463577,28044,151,Jean-Talon / Normanville
+det-01173-01,Ahuntsic-Cartierville,Berri,Louvain,-73.650118,45.549271,157.53216374269005,53876,342,Berri / Louvain
+det-01269-01,Ahuntsic-Cartierville,Christophe-Colomb,Henri-Bourassa,-73.661524,45.562217,138.98932384341637,39056,281,Christophe-Colomb / Henri-Bourassa
+det-00970-01,Mercier–Hochelaga-Maisonneuve,Notre-Dame,Curatteau,-73.508203,45.585309,136.275,32706,240,Notre-Dame / Curatteau
+det-00077-01,Côte-des-Neiges–Notre-Dame-de-Grâce,Bourret,Décarie inter. Est,-73.63901615,45.488279,129.85576923076923,13505,104,Bourret / Décarie inter. Est
+det-00118-02,Côte-des-Neiges–Notre-Dame-de-Grâce,Girouard,Terrebonne,-73.62487067,45.47833835,128.63333333333333,27013,210,Girouard / Terrebonne
+det-13259-03,Saint-Laurent,Côte-de-Liesse,Lucerne,-73.663324,45.508068,119.0,11067,93,Côte-de-Liesse / Lucerne
+det-13259-02,Saint-Laurent,Côte-de-Liesse,Lucerne,-73.663422,45.507889,97.48743718592965,19400,199,Côte-de-Liesse / Lucerne
+det-01487-03,Le Sud-Ouest,Nazareth,William,-73.559387,45.496943,91.69452449567723,31818,347,Nazareth / William
+det-01454-01,Côte-des-Neiges–Notre-Dame-de-Grâce,Darlington,Goyer,-73.63049393,45.50985432,90.77777777777777,817,9,Darlington / Goyer
+det-00974-01,Mercier–Hochelaga-Maisonneuve,Haig,Notre-Dame,-73.514824,45.577387,88.06340057636888,30558,347,Haig / Notre-Dame
+det-01020-01,Villeray–Saint-Michel–Parc-Extension,Iberville,Jean-Talon,-73.60202333,45.55361831,77.61320754716981,16454,212,Iberville / Jean-Talon
+det-00976-02,Mercier–Hochelaga-Maisonneuve,Honoré-Beaugrand,Notre-Dame,-73.508827,45.588384,69.20083682008368,16539,239,Honoré-Beaugrand / Notre-Dame
+det-01026-01,Villeray–Saint-Michel–Parc-Extension,Iberville,Villeray,-73.60896466,45.55669933,66.99489795918367,13131,196,Iberville / Villeray
+det-01340-02,Rivière-des-Prairies–Pointe-aux-Trembles,Montigny,Saint-Jean-Baptiste,-73.505879,45.642491,59.96621621621622,8875,148,Montigny / Saint-Jean-Baptiste
+det-00118-01,Côte-des-Neiges–Notre-Dame-de-Grâce,Girouard,Terrebonne,-73.62487067,45.47833835,54.095238095238095,11360,210,Girouard / Terrebonne
+det-09500-01,Montréal-Nord,Prieur,Saint-Michel,-73.64629999,45.58138196,45.75,732,16,Prieur / Saint-Michel
+det-00257-02,Le Sud-Ouest,Saint-Jacques,Seigneurs,-73.572125,45.489232,42.5632183908046,14812,348,Saint-Jacques / Seigneurs
+det-17649-01,Lachine,25 e Avenue,Victoria,-73.68651791,45.43582657,40.88018433179724,8871,217,25 e Avenue / Victoria
+det-01340-01,Rivière-des-Prairies–Pointe-aux-Trembles,Montigny,Saint-Jean-Baptiste,-73.505879,45.642491,24.7972972972973,3670,148,Montigny / Saint-Jean-Baptiste
+det-00523-01,Ville-Marie,Côte-Sainte-Catherine,Mont-Royal,-73.590263,45.51577934,23.674157303370787,4214,178,Côte-Sainte-Catherine / Mont-Royal
+det-00268-03,Rivière-des-Prairies–Pointe-aux-Trembles,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,-73.61126282,45.62989831,20.368098159509202,3320,163,Louis-Hippolyte-La-Fontaine / Perras Inter. Est
+det-08888-02,Montréal-Nord,Henri-Bourassa,Saint-Vital,-73.646846,45.590333,17.238095238095237,1810,105,Henri-Bourassa / Saint-Vital
+det-08888-01,Montréal-Nord,Henri-Bourassa,Saint-Vital,-73.647116,45.590608,16.97142857142857,1782,105,Henri-Bourassa / Saint-Vital
+det-10471-01,Montréal-Nord,Amos d',Jean-Meunier,-73.62223853,45.6041431,9.495283018867925,2013,212,Amos d' / Jean-Meunier
+det-00523-02,Ville-Marie,Côte-Sainte-Catherine,Mont-Royal,-73.590263,45.51577934,9.252808988764045,1647,178,Côte-Sainte-Catherine / Mont-Royal
+det-00717-01,Ville-Marie,De Lorimier/Viger,Notre-Dame,-73.545473,45.523579,8.167630057803468,2826,346,De Lorimier/Viger / Notre-Dame
+det-00268-02,Rivière-des-Prairies–Pointe-aux-Trembles,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,-73.61126282,45.62989831,2.4444444444444446,44,18,Louis-Hippolyte-La-Fontaine / Perras Inter. Est

@@ -11,6 +11,7 @@ from const import (
     SEASON_ORDER,
     MONTHLY_PATH,
     HOURLY_PATH,
+    MAP_DATA_PATH,
     HEATMAP_DATA_PATH,
     SCATTER_DATA_PATH,
     LOCAL_TIMEZONE,
@@ -133,9 +134,98 @@ def _mean_volume_by_group(site_hourly: pd.DataFrame, group_cols: list[str]) -> p
         )
     )
 
-
 #######################################################
-############# Functions for vis 2 data prep #############
+############# Functions for vis 1 data prep ###########
+#######################################################
+
+
+def build_map_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
+    df = df_hourly.copy()
+
+    df = df[df["agg_code"] == "h"].copy()
+
+    df["periode"] = pd.to_datetime(df["periode"], utc=True, errors="coerce")
+    df["periode"] = df["periode"].dt.tz_convert(LOCAL_TIMEZONE)
+    df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
+    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
+    df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
+
+    text_cols = ["instance", "arrondissement", "rue_1", "rue_2"]
+    for col in text_cols:
+        df[col] = df[col].astype("string").str.strip()
+
+    df = df.dropna(
+        subset=[
+            "periode",
+            "volume",
+            "longitude",
+            "latitude",
+            "instance",
+            "arrondissement",
+            "rue_1",
+            "rue_2",
+        ]
+    )
+
+    df = df[
+        (df["volume"] >= 0)
+        & (df["arrondissement"] != "")
+        & (df["instance"] != "")
+    ].copy()
+
+    df["date"] = df["periode"].dt.date
+
+    site_daily = (
+        df.groupby(
+            [
+                "instance",
+                "arrondissement",
+                "rue_1",
+                "rue_2",
+                "longitude",
+                "latitude",
+                "date",
+            ],
+            as_index=False,
+        )["volume"]
+        .sum()
+    )
+
+    site_summary = (
+        site_daily.groupby(
+            [
+                "instance",
+                "arrondissement",
+                "rue_1",
+                "rue_2",
+                "longitude",
+                "latitude",
+            ],
+            as_index=False,
+        )
+        .agg(
+            mean_daily_volume=("volume", "mean"),
+            total_volume=("volume", "sum"),
+            active_days=("date", "nunique"),
+        )
+    )
+
+    site_summary["corridor"] = (
+        site_summary["rue_1"].astype(str)
+        + " / "
+        + site_summary["rue_2"].astype(str)
+    )
+
+    return site_summary.sort_values(
+        "mean_daily_volume",
+        ascending=False,
+    ).reset_index(drop=True)
+
+
+
+
+########################################################
+############# Functions for vis 2 data prep ############
 ########################################################
 
 def prepare_heatmap_hourly_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
@@ -337,9 +427,7 @@ def prepare_scatter_data(df_monthly: pd.DataFrame,
     scatter_df = scatter_df[scatter_df["winter_retention"] != float("inf")]
     return scatter_df
 
-def load_scatter_df(season: str = "Summer") -> pd.DataFrame:
-    df_monthly = pd.read_csv(MONTHLY_PATH)
-    df_hourly = pd.read_csv(HOURLY_PATH)
+def load_scatter_df(df_monthly: pd.DataFrame, df_hourly: pd.DataFrame, season: str = "Summer") -> pd.DataFrame:
     return prepare_scatter_data(df_monthly, df_hourly, season=season)
 
 if __name__ == "__main__":
@@ -348,10 +436,16 @@ if __name__ == "__main__":
     print("Loading raw data from local CSV...")
     df_raw = pd.read_csv(RAW_DATA_PATH)
     aggs = split_by_agg(df_raw)
-    aggs["h"].to_csv(HOURLY_PATH, index=False)
-    aggs["m"].to_csv(MONTHLY_PATH, index=False)
-    print(f"Hourly data saved to {HOURLY_PATH}")
-    print(f"Monthly data saved to {MONTHLY_PATH}")
+    # aggs["h"].to_csv(HOURLY_PATH, index=False)
+    # aggs["m"].to_csv(MONTHLY_PATH, index=False)
+
+    # print(f"Hourly data saved to {HOURLY_PATH}")
+    # print(f"Monthly data saved to {MONTHLY_PATH}")
+
+    print("Building map dataset...")
+    map_df = build_map_data(aggs["h"])
+    map_df.to_csv(MAP_DATA_PATH, index=False)
+    print(f"Map dataset saved to {MAP_DATA_PATH}")
 
     print("Building heatmap dataset...")
     heatmap_df = build_heatmap_dataset(aggs["h"])
@@ -359,6 +453,6 @@ if __name__ == "__main__":
     print(f"Heatmap dataset saved to {HEATMAP_DATA_PATH}")
 
     print("Preparing scatter dataset...")
-    scatter_df = load_scatter_df()
+    scatter_df = load_scatter_df(aggs["m"], aggs["h"])
     scatter_df.to_csv(SCATTER_DATA_PATH, index=False)
     print(f"Scatter dataset saved to {SCATTER_DATA_PATH}")

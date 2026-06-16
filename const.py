@@ -3,12 +3,30 @@ from pathlib import Path
 
 DATASET_PAGE_URL = "https://donnees.montreal.ca/dataset/cyclistes"
 RESOURCE_ID = "a8e463ab-d334-4714-81d5-8da0310d80c0"
+BOROUGH_GEOJSON_URL = (
+    "https://donnees.montreal.ca/dataset/9797a946-9da8-41ec-8815-f6b276dec7e9/"
+    "resource/e18bfd07-edc8-4ce8-8a5a-3b617662a794/download/"
+    "limites-administratives-agglomeration.geojson"
+)
+
 
 RAW_DATA_PATH = Path("data/cyclistes.csv")
 API_HEADERS = {"User-Agent": "Mozilla/5.0"}
 LOCAL_TIMEZONE = "America/Montreal"
 
-REQUIRED_COLUMNS = {"agg_code", "instance", "arrondissement", "periode", "volume"}
+
+REQUIRED_COLUMNS = {
+    "agg_code",
+    "instance",
+    "longitude",
+    "latitude",
+    "arrondissement",
+    "rue_1",
+    "rue_2",
+    "periode",
+    "volume",
+}
+
 
 SEASON_MAP = {
     12: "Winter", 1: "Winter", 2: "Winter",
@@ -38,3 +56,5 @@ MONTHLY_PATH = Path("data/monthly_data.csv")
 
 HEATMAP_DATA_PATH = Path("data/heatmap_viz2.csv")
 SCATTER_DATA_PATH = Path("data/scatter_viz4.csv")
+MAP_DATA_PATH = Path("data/map_viz1.csv")
+GEOJSON_PATH = Path("data/montreal_boroughs.geojson")

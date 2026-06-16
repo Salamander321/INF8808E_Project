@@ -23,10 +23,10 @@ import visualizations.heatmap as heatmap
 _HAS_HEATMAP = True
 
 try:
-    import visualizations.choropleth as choropleth         #
-    _HAS_CHOROPLETH = True
+    import visualizations.map as map         #
+    _HAS_MAP = True
 except Exception:             # noqa: BLE001
-    _HAS_CHOROPLETH = False
+    _HAS_MAP = False
 
 try:
     import visualizations.diverging as diverging         
@@ -40,11 +40,16 @@ print(_HAS_HEATMAP)
 # --------------------------------------------------------------------------
 # Data — loaded once at startup, shared across the app.
 # --------------------------------------------------------------------------
+MAP_DF = load_data.load_map_data()
+MAP_GEOJSON = load_data.load_borough_geojson()
+
+
+HEATMAP_DF = load_data.load_heatmap_data()
+
 SCATTER_DF = load_data.load_scatter_data()
 BOUNDS = scatter.get_bounds(SCATTER_DF)
 
 
-HEATMAP_DF = load_data.load_heatmap_data()
 
 # --------------------------------------------------------------------------
 # Styling
@@ -79,10 +84,17 @@ GRAPH_CONFIG = {"displayModeBar": False, "responsive": True}
 
 # ---- Tab builders --------------------------------------------------------
 def where_tab() -> html.Div:
-    if _HAS_CHOROPLETH:
-        content = dcc.Graph(id="vis1-choropleth",
-                            figure=choropleth.get_figure(),  # adjust to its API
-                            config=GRAPH_CONFIG)
+    if _HAS_MAP:
+        content = html.Div([
+            dcc.Checklist(
+                id="map-bubbles",
+                options=[{"label": " Show counting-site bubbles", "value": "on"}],
+                value=["on"],          # checked by default -> bubbles visible
+                style={"margin": "8px 0"},
+            ),
+            dcc.Graph(id="vis1-choropleth", config=GRAPH_CONFIG),
+            # note: no figure=... here — the callback below supplies it
+        ])
     else:
         content = placeholder("Vis 1 — choropleth + bubble overlay")
     return html.Div(style={"padding": "20px 0"}, children=[
@@ -116,7 +128,7 @@ def when_tab() -> html.Div:
     diverging_block = (
         dcc.Graph(id="vis3-diverging", figure=diverging.get_figure(),
                   config=GRAPH_CONFIG)
-        if _HAS_DIVERGING else placeholder("Vis 3 — diverging bar chart")
+        if _HAS_DIVERGING else placeholder("Diverging peak-hour Barchart")
     )
 
     return html.Div(style={"padding": "20px 0", "display": "grid", "gap": "28px"},
@@ -144,8 +156,9 @@ def what_tab() -> html.Div:
                            min=BOUNDS["vol_min"], max=BOUNDS["vol_max"],
                            value=BOUNDS["vol_default"], marks=None,
                            step=max(1, round((BOUNDS["vol_max"] - BOUNDS["vol_min"]) / 200)),
-                           tooltip={"placement": "bottom", "always_visible": True,
-                                    "template": "{value:,.0f}"}),
+                        #    tooltip={"placement": "bottom", "always_visible": True,
+                                    # "template": "{value:,.0f}"}
+                                    ),
             ]),
             html.Div(style={"flex": 1}, children=[
                 html.Label("Winter retention threshold",
@@ -153,8 +166,9 @@ def what_tab() -> html.Div:
                 dcc.Slider(id="ret-slider",
                            min=BOUNDS["ret_min"], max=BOUNDS["ret_max"],
                            value=BOUNDS["ret_default"], step=0.01, marks=None,
-                           tooltip={"placement": "bottom", "always_visible": True,
-                                    "template": "{value:.2f}"}),
+                           tooltip={"placement": "bottom", "always_visible": False,
+                                    "template": "{value:.2f}"}
+                                    ),
             ]),
         ]),
     ])
@@ -193,6 +207,14 @@ app.layout = html.Main(style=PAGE_STYLE, children=[
 @app.callback(Output("tab-content", "children"), Input("main-tabs", "value"))
 def render_tab(tab):
     return {"where": where_tab, "when": when_tab, "what": what_tab}[tab]()
+
+@app.callback(
+    Output("vis1-choropleth", "figure"),
+    Input("map-bubbles", "value"),
+)
+def update_map(bubble_value):
+    show = "on" in (bubble_value or [])
+    return map.get_figure(MAP_DF, MAP_GEOJSON, show)
 
 
 @app.callback(
