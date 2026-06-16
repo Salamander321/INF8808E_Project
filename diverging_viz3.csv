@@ -1,0 +1,103 @@
+corridor,rue_1,rue_2,peak,flow,mean_volume,sample_size
+Berri / Louvain,Berri,Louvain,AM,Inbound,1.03,2382
+Berri / Louvain,Berri,Louvain,PM,Inbound,1.1,2383
+Boucherville / Notre-Dame,Boucherville,Notre-Dame,AM,Inbound,1.57,1882
+Boucherville / Notre-Dame,Boucherville,Notre-Dame,AM,Outbound,1.33,1882
+Boucherville / Notre-Dame,Boucherville,Notre-Dame,PM,Inbound,0.79,1877
+Boucherville / Notre-Dame,Boucherville,Notre-Dame,PM,Outbound,0.86,1877
+Bourbonnière / Sherbrooke,Bourbonnière,Sherbrooke,AM,Inbound,1.91,1369
+Bourbonnière / Sherbrooke,Bourbonnière,Sherbrooke,AM,Outbound,2.51,1369
+Bourbonnière / Sherbrooke,Bourbonnière,Sherbrooke,PM,Inbound,1.25,1363
+Bourbonnière / Sherbrooke,Bourbonnière,Sherbrooke,PM,Outbound,1.17,1363
+Bourret / Décarie inter. Est,Bourret,Décarie inter. Est,AM,Inbound,0.84,608
+Bourret / Décarie inter. Est,Bourret,Décarie inter. Est,AM,Outbound,1.25,608
+Bourret / Décarie inter. Est,Bourret,Décarie inter. Est,PM,Inbound,0.47,600
+Bourret / Décarie inter. Est,Bourret,Décarie inter. Est,PM,Outbound,0.69,600
+Canadiens-de-Montréal / Peel,Canadiens-de-Montréal,Peel,AM,Inbound,6.41,2422
+Canadiens-de-Montréal / Peel,Canadiens-de-Montréal,Peel,AM,Outbound,9.77,2422
+Canadiens-de-Montréal / Peel,Canadiens-de-Montréal,Peel,PM,Inbound,5.79,2414
+Canadiens-de-Montréal / Peel,Canadiens-de-Montréal,Peel,PM,Outbound,7.44,2414
+Charlevoix / Wellington,Charlevoix,Wellington,AM,Inbound,0.64,2218
+Charlevoix / Wellington,Charlevoix,Wellington,AM,Outbound,3.94,2218
+Charlevoix / Wellington,Charlevoix,Wellington,PM,Inbound,1.22,2220
+Charlevoix / Wellington,Charlevoix,Wellington,PM,Outbound,1.76,2220
+Christophe-Colomb / Henri-Bourassa,Christophe-Colomb,Henri-Bourassa,AM,Inbound,1.36,1943
+Christophe-Colomb / Henri-Bourassa,Christophe-Colomb,Henri-Bourassa,AM,Outbound,1.4,2168
+Christophe-Colomb / Henri-Bourassa,Christophe-Colomb,Henri-Bourassa,PM,Inbound,0.51,1952
+Christophe-Colomb / Henri-Bourassa,Christophe-Colomb,Henri-Bourassa,PM,Outbound,0.46,2168
+C�te-Sainte-Catherine / Mont-Royal,C�te-Sainte-Catherine,Mont-Royal,AM,Inbound,0.25,1092
+C�te-Sainte-Catherine / Mont-Royal,C�te-Sainte-Catherine,Mont-Royal,AM,Outbound,0.34,1092
+C�te-Sainte-Catherine / Mont-Royal,C�te-Sainte-Catherine,Mont-Royal,PM,Inbound,0.06,1099
+C�te-Sainte-Catherine / Mont-Royal,C�te-Sainte-Catherine,Mont-Royal,PM,Outbound,0.22,1099
+Darlington / Goyer,Darlington,Goyer,AM,Inbound,1.42,43
+Darlington / Goyer,Darlington,Goyer,PM,Inbound,0.67,58
+De Lorimier/Viger / Notre-Dame,De Lorimier/Viger,Notre-Dame,AM,Inbound,0.09,2446
+De Lorimier/Viger / Notre-Dame,De Lorimier/Viger,Notre-Dame,PM,Inbound,0.08,2431
+Girouard / Terrebonne,Girouard,Terrebonne,AM,Inbound,1.18,1353
+Girouard / Terrebonne,Girouard,Terrebonne,AM,Outbound,0.89,2659
+Girouard / Terrebonne,Girouard,Terrebonne,PM,Inbound,0.39,1348
+Girouard / Terrebonne,Girouard,Terrebonne,PM,Outbound,0.43,2647
+Haig / Notre-Dame,Haig,Notre-Dame,AM,Inbound,0.28,2440
+Haig / Notre-Dame,Haig,Notre-Dame,AM,Outbound,0.51,2440
+Haig / Notre-Dame,Haig,Notre-Dame,PM,Inbound,0.25,2431
+Haig / Notre-Dame,Haig,Notre-Dame,PM,Outbound,0.42,2431
+Honoré-Beaugrand / Notre-Dame,Honoré-Beaugrand,Notre-Dame,AM,Inbound,0.24,1877
+Honoré-Beaugrand / Notre-Dame,Honoré-Beaugrand,Notre-Dame,AM,Outbound,0.02,1877
+Honoré-Beaugrand / Notre-Dame,Honoré-Beaugrand,Notre-Dame,PM,Inbound,0.38,1873
+Honoré-Beaugrand / Notre-Dame,Honoré-Beaugrand,Notre-Dame,PM,Outbound,0.02,1873
+Iberville / Jean-Talon,Iberville,Jean-Talon,AM,Inbound,1.15,1352
+Iberville / Jean-Talon,Iberville,Jean-Talon,PM,Inbound,0.79,1344
+Iberville / Villeray,Iberville,Villeray,AM,Inbound,1.14,1314
+Iberville / Villeray,Iberville,Villeray,PM,Inbound,0.51,1291
+Jean-Talon / Normanville,Jean-Talon,Normanville,AM,Inbound,2.75,894
+Jean-Talon / Normanville,Jean-Talon,Normanville,PM,Inbound,2.26,885
+Lajeunesse / Legendre,Lajeunesse,Legendre,AM,Inbound,7.47,2374
+Lajeunesse / Legendre,Lajeunesse,Legendre,PM,Inbound,4.77,2383
+Louis-Hippolyte-La-Fontaine / Perras Inter. Est,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,AM,Inbound,0.04,136
+Louis-Hippolyte-La-Fontaine / Perras Inter. Est,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,AM,Outbound,0.43,987
+Louis-Hippolyte-La-Fontaine / Perras Inter. Est,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,PM,Inbound,0.01,136
+Louis-Hippolyte-La-Fontaine / Perras Inter. Est,Louis-Hippolyte-La-Fontaine,Perras Inter. Est,PM,Outbound,0.22,980
+Maisonneuve / Saint-Laurent,Maisonneuve,Saint-Laurent,AM,Inbound,5.04,112
+Maisonneuve / Saint-Laurent,Maisonneuve,Saint-Laurent,AM,Outbound,4.58,112
+Maisonneuve / Saint-Laurent,Maisonneuve,Saint-Laurent,PM,Inbound,7.86,132
+Maisonneuve / Saint-Laurent,Maisonneuve,Saint-Laurent,PM,Outbound,3.77,132
+Maisonneuve / Saint-Marc,Maisonneuve,Saint-Marc,AM,Inbound,10.97,2348
+Maisonneuve / Saint-Marc,Maisonneuve,Saint-Marc,AM,Outbound,11.47,2348
+Maisonneuve / Saint-Marc,Maisonneuve,Saint-Marc,PM,Inbound,3.26,2338
+Maisonneuve / Saint-Marc,Maisonneuve,Saint-Marc,PM,Outbound,10.09,2339
+Montigny / Saint-Jean-Baptiste,Montigny,Saint-Jean-Baptiste,AM,Inbound,0.95,1157
+Montigny / Saint-Jean-Baptiste,Montigny,Saint-Jean-Baptiste,AM,Outbound,0.45,1157
+Montigny / Saint-Jean-Baptiste,Montigny,Saint-Jean-Baptiste,PM,Inbound,0.59,1164
+Montigny / Saint-Jean-Baptiste,Montigny,Saint-Jean-Baptiste,PM,Outbound,0.15,1164
+Nazareth / William,Nazareth,William,AM,Outbound,1.61,1741
+Nazareth / William,Nazareth,William,PM,Outbound,1.32,1740
+Notre-Dame / Curatteau,Notre-Dame,Curatteau,AM,Inbound,0.94,1882
+Notre-Dame / Curatteau,Notre-Dame,Curatteau,AM,Outbound,1.12,1882
+Notre-Dame / Curatteau,Notre-Dame,Curatteau,PM,Inbound,0.16,1877
+Notre-Dame / Curatteau,Notre-Dame,Curatteau,PM,Outbound,0.17,1877
+Notre-Dame / Peel,Notre-Dame,Peel,AM,Inbound,3.55,1295
+Notre-Dame / Peel,Notre-Dame,Peel,AM,Outbound,2.99,1295
+Notre-Dame / Peel,Notre-Dame,Peel,PM,Inbound,2.24,1285
+Notre-Dame / Peel,Notre-Dame,Peel,PM,Outbound,1.61,1286
+Ottawa / Peel,Ottawa,Peel,AM,Inbound,6.6,2415
+Ottawa / Peel,Ottawa,Peel,AM,Outbound,3.37,2415
+Ottawa / Peel,Ottawa,Peel,PM,Inbound,5.4,2412
+Ottawa / Peel,Ottawa,Peel,PM,Outbound,3.82,2410
+Papineau / Rachel,Papineau,Rachel,AM,Inbound,7.73,1314
+Papineau / Rachel,Papineau,Rachel,AM,Outbound,10.07,1314
+Papineau / Rachel,Papineau,Rachel,PM,Inbound,6.66,1315
+Papineau / Rachel,Papineau,Rachel,PM,Outbound,3.71,1315
+Peel / René-Lévesque,Peel,René-Lévesque,AM,Inbound,4.43,2316
+Peel / René-Lévesque,Peel,René-Lévesque,AM,Outbound,5.48,2316
+Peel / René-Lévesque,Peel,René-Lévesque,PM,Inbound,4.06,2324
+Peel / René-Lévesque,Peel,René-Lévesque,PM,Outbound,4.85,2324
+Peel / Saint-Antoine,Peel,Saint-Antoine,AM,Inbound,9.45,2429
+Peel / Saint-Antoine,Peel,Saint-Antoine,AM,Outbound,12.31,1389
+Peel / Saint-Antoine,Peel,Saint-Antoine,PM,Inbound,7.86,2423
+Peel / Saint-Antoine,Peel,Saint-Antoine,PM,Outbound,9.05,1412
+Saint-Jacques / Seigneurs,Saint-Jacques,Seigneurs,AM,Inbound,0.93,2440
+Saint-Jacques / Seigneurs,Saint-Jacques,Seigneurs,PM,Inbound,0.26,2424
+Saint-Urbain / Viger,Saint-Urbain,Viger,AM,Inbound,0.67,2421
+Saint-Urbain / Viger,Saint-Urbain,Viger,AM,Outbound,7.99,2421
+Saint-Urbain / Viger,Saint-Urbain,Viger,PM,Inbound,0.59,2431
+Saint-Urbain / Viger,Saint-Urbain,Viger,PM,Outbound,5.83,2431
