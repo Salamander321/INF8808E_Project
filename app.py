@@ -35,7 +35,6 @@ except Exception:             # noqa: BLE001
     _HAS_DIVERGING = False
 
 
-print(_HAS_HEATMAP)
 
 # --------------------------------------------------------------------------
 # Data — loaded once at startup, shared across the app.
@@ -166,8 +165,7 @@ def what_tab() -> html.Div:
                 dcc.Slider(id="ret-slider",
                            min=BOUNDS["ret_min"], max=BOUNDS["ret_max"],
                            value=BOUNDS["ret_default"], step=0.01, marks=None,
-                           tooltip={"placement": "bottom", "always_visible": False,
-                                    "template": "{value:.2f}"}
+                        #    tooltip={"placement": "bottom", "always_visible": False,}
                                     ),
             ]),
         ]),
