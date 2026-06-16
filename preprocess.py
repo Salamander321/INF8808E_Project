@@ -10,6 +10,13 @@ RESOURCE_ID = "a8e463ab-d334-4714-81d5-8da0310d80c0"
 RAW_DATA_PATH = Path("cyclistes.csv")
 VIZ1_OUTPUT_PATH = Path("map_viz1.csv")
 VIZ2_OUTPUT_PATH = Path("heatmap_viz2.csv")
+VIZ3_OUTPUT_PATH = Path("diverging_viz3.csv")
+
+INBOUND_DIRECTIONS  = {"Sud", "Est"}
+OUTBOUND_DIRECTIONS = {"Nord", "Ouest"}
+AM_PEAK_HOURS = {7, 8}
+PM_PEAK_HOURS = {16, 17}
+
 API_HEADERS = {"User-Agent": "Mozilla/5.0"}
 LOCAL_TIMEZONE = "America/Montreal"
 
@@ -67,7 +74,7 @@ def download_hourly_data(output_path: Path = RAW_DATA_PATH, batch_size: int = 50
     total = int(count_response.json()["result"]["records"][0]["n"])
 
     fields = [
-        "_id",
+         "_id",
         "agg_code",
         "instance",
         "longitude",
@@ -75,6 +82,7 @@ def download_hourly_data(output_path: Path = RAW_DATA_PATH, batch_size: int = 50
         "arrondissement",
         "rue_1",
         "rue_2",
+        "direction",
         "periode",
         "volume",
     ]
@@ -131,7 +139,9 @@ def load_raw_data(path: Path = RAW_DATA_PATH) -> pd.DataFrame:
         print(f"{path} not found. Downloading hourly data from {DATASET_PAGE_URL}...")
         return download_hourly_data(path)
 
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, encoding="latin-1", sep=";")
+    for col in df.select_dtypes(include="object").columns:
+        df[col] = df[col].str.encode("latin-1", errors="replace").str.decode("utf-8", errors="replace")
     missing = REQUIRED_COLUMNS - set(df.columns)
 
     if missing:
@@ -155,7 +165,7 @@ def prepare_viz2_hourly_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
     df = df_hourly.copy()
 
     if "agg_code" in df.columns:
-        df = df[df["agg_code"] == "h"].copy()
+        df = df[df["agg_code"] == "f"].copy()
 
     df["periode"] = pd.to_datetime(df["periode"], utc=True, errors="coerce")
     df["periode"] = df["periode"].dt.tz_convert(LOCAL_TIMEZONE)
@@ -193,7 +203,7 @@ def _mean_volume_by_group(site_hourly: pd.DataFrame, group_cols: list[str]) -> p
 def build_viz1_map_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
     df = df_hourly.copy()
 
-    df = df[df["agg_code"] == "h"].copy()
+    df = df[df["agg_code"] == "f"].copy()
 
     df["periode"] = pd.to_datetime(df["periode"], utc=True, errors="coerce")
     df["periode"] = df["periode"].dt.tz_convert(LOCAL_TIMEZONE)
@@ -350,6 +360,62 @@ def build_viz2_heatmap_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
         .reset_index(drop=True)
     )
 
+def build_viz3_diverging_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
+    df = df_hourly.copy()
+
+    if "agg_code" in df.columns:
+        df = df[df["agg_code"] == "f"].copy()
+
+    df["periode"] = pd.to_datetime(df["periode"], utc=True, errors="coerce")
+    df["periode"] = df["periode"].dt.tz_convert(LOCAL_TIMEZONE)
+    df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
+
+    for col in ["instance", "arrondissement", "rue_1", "rue_2", "direction"]:
+        if col in df.columns:
+            df[col] = df[col].astype("string").str.strip()
+
+    required = ["periode", "volume", "instance", "rue_1", "rue_2", "direction"]
+    df = df.dropna(subset=required)
+    df = df[(df["volume"] >= 0) & (df["direction"] != "")].copy()
+
+    all_directions = INBOUND_DIRECTIONS | OUTBOUND_DIRECTIONS
+    df = df[df["direction"].isin(all_directions)].copy()
+
+    if df.empty:
+        return pd.DataFrame(columns=[
+            "corridor", "rue_1", "rue_2", "peak", "flow", "mean_volume", "sample_size"
+        ])
+
+    df["hour"] = df["periode"].dt.hour
+    df = df[df["hour"].isin(AM_PEAK_HOURS | PM_PEAK_HOURS)].copy()
+    df["peak"] = df["hour"].apply(lambda h: "AM" if h in AM_PEAK_HOURS else "PM")
+    df["flow"] = df["direction"].apply(
+        lambda d: "Inbound" if d in INBOUND_DIRECTIONS else "Outbound"
+    )
+
+    site_hour = (
+        df
+        .groupby(
+            ["instance", "rue_1", "rue_2", "periode", "peak", "flow"],
+            as_index=False,
+        )["volume"]
+        .sum()
+    )
+
+    agg = (
+        site_hour
+        .groupby(["rue_1", "rue_2", "peak", "flow"], as_index=False)
+        .agg(
+            mean_volume=("volume", "mean"),
+            sample_size=("volume", "size"),
+        )
+    )
+
+    agg["mean_volume"] = agg["mean_volume"].round(2)
+    agg["corridor"] = agg["rue_1"].astype(str) + " / " + agg["rue_2"].astype(str)
+
+    col_order = ["corridor", "rue_1", "rue_2", "peak", "flow", "mean_volume", "sample_size"]
+    return agg[col_order].sort_values(["corridor", "peak", "flow"]).reset_index(drop=True)
 
 def main() -> None:
     raw_data = load_raw_data()
@@ -362,6 +428,11 @@ def main() -> None:
     viz2_heatmap.to_csv(VIZ2_OUTPUT_PATH, index=False)
     print(f"Wrote {len(viz2_heatmap)} rows to {VIZ2_OUTPUT_PATH}")
 
+    viz3_diverging = build_viz3_diverging_data(raw_data)
+    viz3_diverging.to_csv(VIZ3_OUTPUT_PATH, index=False)
+    print(f"Wrote {len(viz3_diverging)} rows to {VIZ3_OUTPUT_PATH}")
+
+  
 
 if __name__ == "__main__":
     main()

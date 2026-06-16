@@ -6,6 +6,15 @@ import plotly.graph_objects as go
 from dash import Dash, Input, Output, dcc, html
 from viz.viz1_map import make_viz1_figure
 
+from viz.viz3_diverging import (
+    make_viz3_figure,
+    load_viz3_data,
+    get_all_corridors,
+    get_top_corridors,
+    TOP_N_DEFAULT,
+)
+
+
 HEATMAP_DATA_PATH = Path("heatmap_viz2.csv")
 
 DAY_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -223,6 +232,7 @@ def make_heatmap_figure(data: pd.DataFrame, selected_season: str, selected_borou
 
 
 heatmap_data = load_heatmap_data()
+viz3_data = load_viz3_data()
 
 app = Dash(__name__)
 app.title = "Montreal Cycling Dashboard"
@@ -260,6 +270,7 @@ app.layout = html.Main(
         ),
 
         html.Div(
+
             style=CARD_STYLE,
             children=[
                 html.H1(
@@ -311,7 +322,55 @@ app.layout = html.Main(
                     style={**NOTE_STYLE, "marginTop": "12px"},
                 ),
             ],
-        )
+        ),
+
+        html.Div(
+            style=CARD_STYLE,
+            children=[
+                html.H1(
+                    "Directional peak-hour flow by corridor",
+                    style={"margin": "0 0 6px", "fontSize": "28px"},
+                ),
+                html.P(
+                    "Mean cyclist volume per counter during AM (7h–9h) and PM (16h–18h) peaks, "
+                    "split by direction: inbound (toward downtown) vs outbound (away from downtown).",
+                    style={**NOTE_STYLE, "margin": "0"},
+                ),
+                html.Div(
+                    style=CONTROL_ROW_STYLE,
+                    children=[
+                        html.Label(
+                            style={**CONTROL_STYLE, "minWidth": "480px"},
+                            children=[
+                                html.Span("Corridors", style={"fontWeight": "700", "fontSize": "14px"}),
+                                dcc.Dropdown(
+                                    id="viz3-corridor-dropdown",
+                                    options=[
+                                        {"label": c, "value": c}
+                                        for c in get_all_corridors(viz3_data)
+                                    ],
+                                    value=get_top_corridors(viz3_data, TOP_N_DEFAULT),
+                                    multi=True,
+                                    clearable=False,
+                                    placeholder="Select corridors…",
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                dcc.Graph(
+                    id="viz3-diverging",
+                    config={"displayModeBar": False, "responsive": True},
+                ),
+                html.P(
+                    "Bars extending left indicate inbound cyclist flow (Sud/Est directions, toward downtown). "
+                    "Bars extending right indicate outbound flow (Nord/Ouest). "
+                    "Note: directional classification uses cardinal directions as a geographic approximation "
+                    "relative to downtown Ville-Marie and may not perfectly reflect on-the-ground flow.",
+                    style={**NOTE_STYLE, "marginTop": "12px"},
+                ),
+            ],
+        ),
     ],
 )
 
@@ -332,6 +391,12 @@ def update_viz1_map(toggle_values: list[str]) -> go.Figure:
 def update_heatmap(selected_season: str, selected_borough: str) -> go.Figure:
     return make_heatmap_figure(heatmap_data, selected_season, selected_borough)
 
+@app.callback(
+    Output("viz3-diverging", "figure"),
+    Input("viz3-corridor-dropdown", "value"),
+)
+def update_viz3(selected_corridors: list[str]) -> go.Figure:
+    return make_viz3_figure(selected_corridors or [])
 
 if __name__ == "__main__":
     app.run(debug=False)
