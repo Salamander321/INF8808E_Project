@@ -18,23 +18,13 @@ import load_data
 
 import visualizations.scatter as scatter            
 import visualizations.heatmap as heatmap          
+import visualizations.map as map         #
+import visualizations.diverging as diverging         
+          # noqa: BLE001
 
-           
+_HAS_DIVERGING = True
 _HAS_HEATMAP = True
-
-try:
-    import visualizations.map as map         #
-    _HAS_MAP = True
-except Exception:             # noqa: BLE001
-    _HAS_MAP = False
-
-try:
-    import visualizations.diverging as diverging         
-    _HAS_DIVERGING = True
-except Exception:             # noqa: BLE001
-    _HAS_DIVERGING = False
-
-
+_HAS_MAP = True
 
 # --------------------------------------------------------------------------
 # Data — loaded once at startup, shared across the app.
@@ -44,8 +34,8 @@ MAP_GEOJSON = load_data.load_borough_geojson()
 
 
 HEATMAP_DF = load_data.load_heatmap_data()
-
 SCATTER_DF = load_data.load_scatter_data()
+DIVERGING_DF = load_data.load_diverging_data()
 BOUNDS = scatter.get_bounds(SCATTER_DF)
 
 
@@ -124,11 +114,27 @@ def when_tab() -> html.Div:
     else:
         heatmap_block = placeholder("Seasonal Heatmap")
 
-    diverging_block = (
-        dcc.Graph(id="vis3-diverging", figure=diverging.get_figure(),
-                  config=GRAPH_CONFIG)
-        if _HAS_DIVERGING else placeholder("Diverging peak-hour Barchart")
-    )
+    if _HAS_DIVERGING:
+        diverging_block = html.Div([
+            html.Label(
+                style={"display": "block", "margin": "12px 0"},
+                children=[
+                    html.Span("Corridors ", style={"fontWeight": "700"}),
+                    dcc.Dropdown(
+                        id="dv-corridors",
+                        options=[{"label": c, "value": c}
+                                for c in diverging.get_all_corridors(DIVERGING_DF)],
+                        value=diverging.get_top_corridors(DIVERGING_DF),
+                        multi=True,
+                        clearable=False,
+                        placeholder="Select corridors…",
+                    ),
+                ],
+            ),
+            dcc.Graph(id="vis3-diverging", config=GRAPH_CONFIG),  # no figure=
+        ])
+    else:
+        diverging_block = placeholder("Diverging peak-hour Barchart")
 
     return html.Div(style={"padding": "20px 0", "display": "grid", "gap": "28px"},
                     children=[
@@ -172,7 +178,7 @@ def what_tab() -> html.Div:
     ])
 
 
-# ---- Heatmap dropdown options (only if module present) -------------------
+# ---- Heatmap dropdown options  -------------------
 def heatmap_season_options():
     return heatmap.get_season_options(HEATMAP_DF) \
         if hasattr(heatmap, "get_season_options") else []
@@ -214,6 +220,22 @@ def update_map(bubble_value):
     show = "on" in (bubble_value or [])
     return map.get_figure(MAP_DF, MAP_GEOJSON, show)
 
+@app.callback(
+        Output("vis2-heatmap", "figure"),
+        Input("hm-season", "value"),
+        Input("hm-borough", "value"),
+)
+def update_heatmap(season, borough):
+    return heatmap.make_heatmap_figure(
+        HEATMAP_DF, season, borough)
+
+@app.callback(
+    Output("vis3-diverging", "figure"),
+    Input("dv-corridors", "value"),
+)
+def update_diverging(selected_corridors):
+    return diverging.get_figure(DIVERGING_DF, selected_corridors or [])
+
 
 @app.callback(
     Output("vis4-scatter", "figure"),
@@ -224,14 +246,6 @@ def update_scatter(vol_thresh, ret_thresh):
     return scatter.build_figure(SCATTER_DF, vol_thresh, ret_thresh)
 
 
-@app.callback(
-        Output("vis2-heatmap", "figure"),
-        Input("hm-season", "value"),
-        Input("hm-borough", "value"),
-)
-def update_heatmap(season, borough):
-    return heatmap.make_heatmap_figure(
-        HEATMAP_DF, season, borough)
 
 server = app.server
 

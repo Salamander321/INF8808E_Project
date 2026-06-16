@@ -59,3 +59,13 @@ def load_borough_geojson() -> dict:
         GEOJSON_PATH.write_text(response.text, encoding="utf-8")
 
     return json.loads(GEOJSON_PATH.read_text(encoding="utf-8"))
+
+def load_diverging_data() -> pd.DataFrame:
+    if not DIVERGING_DATA_PATH.exists():
+        return pd.DataFrame()
+ 
+    df = pd.read_csv(DIVERGING_DATA_PATH)
+    df["mean_volume"] = pd.to_numeric(df["mean_volume"], errors="coerce")
+    df = df.dropna(subset=["corridor", "peak", "flow", "mean_volume"])
+    return df
+ 

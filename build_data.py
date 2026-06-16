@@ -9,14 +9,17 @@ from const import (
     RESOURCE_ID,
     DAY_ORDER_MAP,
     SEASON_ORDER,
-    MONTHLY_PATH,
-    HOURLY_PATH,
     MAP_DATA_PATH,
     HEATMAP_DATA_PATH,
     SCATTER_DATA_PATH,
+    DIVERGING_DATA_PATH,
     LOCAL_TIMEZONE,
     SEASON_MAP,
     DAY_ORDER,
+    INBOUND_DIRECTIONS,
+    OUTBOUND_DIRECTIONS,
+    AM_PEAK_HOURS,
+    PM_PEAK_HOURS,
 )
 
 
@@ -353,6 +356,69 @@ def build_heatmap_dataset(df_hourly: pd.DataFrame) -> pd.DataFrame:
         .reset_index(drop=True))
 
 
+#############################################################
+############# Functions for vis 4 data prep ############
+#############################################################
+
+def build_viz3_diverging_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
+    df = df_hourly.copy()
+
+    if "agg_code" in df.columns:
+        df = df[df["agg_code"] == "f"].copy()
+
+    df["periode"] = pd.to_datetime(df["periode"], utc=True, errors="coerce")
+    df["periode"] = df["periode"].dt.tz_convert(LOCAL_TIMEZONE)
+    df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
+
+    for col in ["instance", "arrondissement", "rue_1", "rue_2", "direction"]:
+        if col in df.columns:
+            df[col] = df[col].astype("string").str.strip()
+
+    required = ["periode", "volume", "instance", "rue_1", "rue_2", "direction"]
+    df = df.dropna(subset=required)
+    df = df[(df["volume"] >= 0) & (df["direction"] != "")].copy()
+
+    all_directions = INBOUND_DIRECTIONS | OUTBOUND_DIRECTIONS
+    df = df[df["direction"].isin(all_directions)].copy()
+
+    if df.empty:
+        return pd.DataFrame(columns=[
+            "corridor", "rue_1", "rue_2", "peak", "flow", "mean_volume", "sample_size"
+        ])
+
+    df["hour"] = df["periode"].dt.hour
+    df = df[df["hour"].isin(AM_PEAK_HOURS | PM_PEAK_HOURS)].copy()
+    df["peak"] = df["hour"].apply(lambda h: "AM" if h in AM_PEAK_HOURS else "PM")
+    df["flow"] = df["direction"].apply(
+        lambda d: "Inbound" if d in INBOUND_DIRECTIONS else "Outbound"
+    )
+
+    site_hour = (
+        df
+        .groupby(
+            ["instance", "rue_1", "rue_2", "periode", "peak", "flow"],
+            as_index=False,
+        )["volume"]
+        .sum()
+    )
+
+    agg = (
+        site_hour
+        .groupby(["rue_1", "rue_2", "peak", "flow"], as_index=False)
+        .agg(
+            mean_volume=("volume", "mean"),
+            sample_size=("volume", "size"),
+        )
+    )
+
+    agg["mean_volume"] = agg["mean_volume"].round(2)
+    agg["corridor"] = agg["rue_1"].astype(str) + " / " + agg["rue_2"].astype(str)
+
+    col_order = ["corridor", "rue_1", "rue_2", "peak", "flow", "mean_volume", "sample_size"]
+    return agg[col_order].sort_values(["corridor", "peak", "flow"]).reset_index(drop=True)
+
+
+
 
 #############################################################
 ################### Function for vis 4 data prep ############
@@ -465,6 +531,11 @@ if __name__ == "__main__":
     heatmap_df = build_heatmap_dataset(aggs["h"])
     heatmap_df.to_csv(HEATMAP_DATA_PATH, index=False)
     print(f"Heatmap dataset saved to {HEATMAP_DATA_PATH}")
+
+    print("Building diverging dataset...")
+    diverging_df = build_viz3_diverging_data(df_raw)
+    diverging_df.to_csv(DIVERGING_DATA_PATH, index=False)
+    print(f"Diverging dataset saved to {DIVERGING_DATA_PATH}")
 
     print("Preparing scatter dataset...")
     scatter_df = load_scatter_df(aggs["m"], aggs["h"])

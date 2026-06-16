@@ -56,5 +56,17 @@ MONTHLY_PATH = Path("data/monthly_data.csv")
 
 HEATMAP_DATA_PATH = Path("data/heatmap_viz2.csv")
 SCATTER_DATA_PATH = Path("data/scatter_viz4.csv")
+DIVERGING_DATA_PATH = Path("data/diverging_viz3.csv")
 MAP_DATA_PATH = Path("data/map_viz1.csv")
 GEOJSON_PATH = Path("data/montreal_boroughs.geojson")
+
+INBOUND_DIRECTIONS  = {"Sud", "Est"}
+OUTBOUND_DIRECTIONS = {"Nord", "Ouest"}
+AM_PEAK_HOURS = {7, 8}
+PM_PEAK_HOURS = {16, 17}
+
+# Montreal blue palette — dark for Inbound, light for Outbound
+COLOR_INBOUND  = "#1a4f8a"   # dark blue  (toward downtown)
+COLOR_OUTBOUND = "#8ab4d8"   # light blue (away from downtown)
+ 
+TOP_N_DEFAULT = 8
