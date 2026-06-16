@@ -233,6 +233,7 @@ def update_heatmap(season, borough):
     return heatmap.make_heatmap_figure(
         HEATMAP_DF, season, borough)
 
+server = app.server
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8050, debug=True)
