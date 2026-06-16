@@ -69,7 +69,7 @@ PLACEHOLDER = {
 def placeholder(label: str) -> html.Div:
     return html.Div(style=PLACEHOLDER, children=html.Div([
         html.Div(f"{label} is not built yet.", style={"fontWeight": "700"}),
-        html.Div("Add its module and it will appear here.", style=NOTE),
+        html.Div("It will appear once it is built and integrated. CIAO !!!", style=NOTE),
     ]))
 
 
@@ -137,7 +137,7 @@ def when_tab() -> html.Div:
                style=NOTE),
         html.Div([html.H3("Seasonal Heatmap",
                           style={"margin": "0 0 8px"}), heatmap_block]),
-        html.Div([html.H3("Vis 3 — Directional peak-hour flow",
+        html.Div([html.H3("Diverging peak-hour barchart",
                           style={"margin": "0 0 8px"}), diverging_block]),
     ])
 

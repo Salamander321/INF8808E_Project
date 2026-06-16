@@ -23,7 +23,17 @@ from const import (
 #######################################
 #### FOR DATA PREP FOR EACHH VIE W#####
 #######################################
-
+REQUIRED_COLUMNS = {
+    "agg_code",
+    "instance",
+    "longitude",
+    "latitude",
+    "arrondissement",
+    "rue_1",
+    "rue_2",
+    "periode",
+    "volume",
+}
 ######################################
 ###### GLOBAL FUNCTIONS ##############
 ######################################
@@ -56,7 +66,11 @@ def download_hourly_data(output_path: Path = RAW_DATA_PATH, batch_size: int = 50
         "_id",
         "agg_code",
         "instance",
+        "longitude",
+        "latitude",
         "arrondissement",
+        "rue_1",
+        "rue_2",
         "periode",
         "volume",
     ]

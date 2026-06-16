@@ -3,8 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
-from const import HEATMAP_DATA_PATH, DAY_ORDER, HOUR_ORDER, HOUR_LABELS, SEASON_ORDER
-
+from const import  DAY_ORDER, HOUR_ORDER, HOUR_LABELS, SEASON_ORDER, DAY_ORDER_MAP
 
 PAGE_STYLE = {
     "maxWidth": "1180px",
@@ -67,12 +66,6 @@ def get_season_options(data: pd.DataFrame) -> list[dict[str, str]]:
 def round_up_scale_max(value: float) -> float:
     """Rounds a color scale max upward with readable, tighter breaks.
 
-    Examples:
-    - 18 -> 20
-    - 68.8 -> 70
-    - 138.4 -> 150
-    - 180 -> 200
-    - 690.5 -> 700
     """
     if value <= 0 or not math.isfinite(value):
         return 1
@@ -114,7 +107,7 @@ def make_empty_figure(message: str) -> go.Figure:
 def make_heatmap_figure(data: pd.DataFrame, selected_season: str, selected_borough: str) -> go.Figure:
     if data.empty:
         return make_empty_figure(
-            "Run python preprocess.py first to generate heatmap_viz2.csv."
+            "Run python build_data.py first to generate heatmap_viz2.csv."
         )
 
     filtered = data[
@@ -197,7 +190,15 @@ def make_heatmap_figure(data: pd.DataFrame, selected_season: str, selected_borou
         paper_bgcolor="#ffffff",
         plot_bgcolor="#ffffff",
         font={"color": "#1f2933"},
-        xaxis={"side": "top", "fixedrange": True},
+        # xaxis={"side": "top", "fixedrange": True},
+        xaxis={
+            "type": "category",
+            "categoryorder": "array",
+            "categoryarray": DAY_ORDER,
+            "side": "bottom",          # or "top" if you want them up top
+            "fixedrange": True,
+            "tickangle": 0,
+        },
         yaxis={"title": "Hour of day", "autorange": "reversed", "fixedrange": True},
     )
 
