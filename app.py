@@ -281,6 +281,19 @@ app.layout = html.Main(
                     "Mean hourly cyclist volume per counter, filtered by season and borough.",
                     style={**NOTE_STYLE, "margin": "0"},
                 ),
+                html.P(
+                    "This visualization examines when cycling demand is highest and how daily "
+                    "patterns vary by season and borough. It helps identify weekday commuting "
+                    "peaks, broader weekend activity, and locations where cycling rhythms differ "
+                    "from the Montréal-wide pattern.",
+                    style={**NOTE_STYLE, "margin": "6px 0 0"},
+                ),
+                html.P(
+                    "Each cell represents the mean hourly cyclist volume per counter for one "
+                    "day-of-week and hour combination, averaged across all dates matching "
+                    "the selected filters.",
+                    style={**NOTE_STYLE, "margin": "6px 0 0"},
+                ),
                 html.Div(
                     style=CONTROL_ROW_STYLE,
                     children=[
@@ -320,6 +333,13 @@ app.layout = html.Main(
                     "identify recreational cycling patterns. The season and borough filters allow "
                     "planners to compare how temporal cycling behavior changes across the network.",
                     style={**NOTE_STYLE, "marginTop": "12px"},
+                ),
+                html.P(
+                    "Scale note: the color scale adapts to the selected season and borough. "
+                    "Compare colors within the current heatmap and use hover values for comparisons "
+                    "across filters. Across Montréal, weekdays peak around 08:00 and 16:00-18:00, "
+                    "while weekends show a broader afternoon peak.",
+                    style={**NOTE_STYLE, "marginTop": "8px"},
                 ),
             ],
         ),
