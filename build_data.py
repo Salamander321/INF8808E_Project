@@ -171,6 +171,8 @@ def build_map_data(df_hourly: pd.DataFrame) -> pd.DataFrame:
     for col in text_cols:
         df[col] = df[col].astype("string").str.strip()
 
+    df["arrondissement"] = df["arrondissement"].str.replace("\u2013", "-", regex=False)
+
     df = df.dropna(
         subset=[
             "periode",

@@ -47,13 +47,26 @@ PAGE_STYLE = {
     "maxWidth": "1280px", "margin": "24px auto", "padding": "0 20px",
     "fontFamily": "Inter, Arial, sans-serif", "color": "#1f2933",
 }
-NOTE = {"color": "#5f6b7a", "fontSize": "14px"}
+NOTE = {"color": "#5f6b7a", "fontSize": "20px"}
+
 PLACEHOLDER = {
     "display": "flex", "alignItems": "center", "justifyContent": "center",
     "height": "320px", "border": "1px dashed #c4ccd6", "borderRadius": "8px",
     "color": "#5f6b7a", "background": "#fafbfc", "textAlign": "center",
 }
 
+CARD_STYLE = {
+    "background": "#ffffff",
+    "border": "1px solid #d8dee7",
+    "borderRadius": "8px",
+    "padding": "24px",
+    "boxShadow": "0 1px 2px rgba(15, 23, 42, 0.06)",
+}
+NOTE_STYLE = {
+    "color": "#5f6b7a",
+    "fontSize": "20px",
+    "lineHeight": "1.5",
+}
 
 def placeholder(label: str) -> html.Div:
     return html.Div(style=PLACEHOLDER, children=html.Div([
@@ -75,20 +88,25 @@ GRAPH_CONFIG = {"displayModeBar": False, "responsive": True}
 def where_tab() -> html.Div:
     if _HAS_MAP:
         content = html.Div([
+            html.P("Each borough is shaded by its mean daily cyclist volume per counter — darker means more cycling. " \
+                "Bubbles mark individual counting sites, sized by volume. Toggle the bubbles on or off to switch between" \
+                " borough-level patterns and corridor-level detail.",
+                style={**NOTE_STYLE, "margin": "6px 0 0"}),
             dcc.Checklist(
                 id="map-bubbles",
-                options=[{"label": " Show counting-site bubbles", "value": "on"}],
+                options=[{"label": "Counting sites", "value": "on"}],
                 value=["on"],          # checked by default -> bubbles visible
                 style={"margin": "8px 0"},
             ),
             dcc.Graph(id="vis1-choropleth", config=GRAPH_CONFIG),
-            # note: no figure=... here — the callback below supplies it
+            html.P("Cycling activity concentrates sharply in the central boroughs around Ville-Marie and Le Plateau, and " \
+                "drops off toward the periphery — a few central corridors carry a large share of the network's traffic.",
+                style={**NOTE_STYLE, "margin": "6px 0 0"}),
         ])
     else:
         content = placeholder("Vis 1 — choropleth + bubble overlay")
     return html.Div(style={"padding": "20px 0"}, children=[
-        html.P("Geographic distribution of cycling activity across the island.",
-               style=NOTE),
+        html.H2("Geographic distribution of cycling activity across the island."),
         content,
     ])
 
@@ -96,6 +114,19 @@ def where_tab() -> html.Div:
 def when_tab() -> html.Div:
     if _HAS_HEATMAP:
         heatmap_block = html.Div([
+            # html.P("Mean hourly cyclist volume per counter, filtered by season and borough.",
+            #         style={**NOTE_STYLE, "margin": "0"}),
+            html.P("This visualization examines when cycling demand is highest and how daily "
+                    "patterns vary by season and borough. It helps identify weekday commuting "
+                    "peaks, broader weekend activity, and locations where cycling rhythms "
+                    "differ from the Montréal-wide pattern.",
+                    style={**NOTE_STYLE, "margin": "6px 0 0"}),
+            html.P("Each cell is the mean hourly cyclist volume per counter for one "
+                    "day-of-week and hour combination, averaged across all dates matching "
+                    "the selected filters.",
+                    style={**NOTE_STYLE, "margin": "6px 0 0"}),
+
+
             html.Div(style={"display": "flex", "gap": "16px",
                             "flexWrap": "wrap", "margin": "12px 0"}, children=[
                 html.Label([html.Span("Season ", style={"fontWeight": "700"}),
@@ -110,12 +141,18 @@ def when_tab() -> html.Div:
                                          style={"minWidth": "220px"})]),
             ]),
             dcc.Graph(id="vis2-heatmap", config=GRAPH_CONFIG),
+        
+        
+        
         ])
     else:
         heatmap_block = placeholder("Seasonal Heatmap")
 
     if _HAS_DIVERGING:
         diverging_block = html.Div([
+            html.P("Mean cyclist volume per counter during AM (7h–9h) and PM (16h–18h) "
+                    "peaks, split by direction: inbound (toward downtown) vs outbound.",
+                    style={**NOTE_STYLE, "margin": "0 0 8px"}),
             html.Label(
                 style={"display": "block", "margin": "12px 0"},
                 children=[
@@ -131,26 +168,38 @@ def when_tab() -> html.Div:
                     ),
                 ],
             ),
-            dcc.Graph(id="vis3-diverging", config=GRAPH_CONFIG),  # no figure=
+            dcc.Graph(id="vis3-diverging", config=GRAPH_CONFIG),
+            html.P("Bars left = inbound (Sud/Est, toward downtown); bars right = outbound "
+                    "(Nord/Ouest). Directional classification approximates flow from cardinal "
+                    "direction relative to downtown Ville-Marie and may not perfectly reflect "
+                    "real movement.",
+                style={**NOTE_STYLE, "marginTop": "12px"}),
         ])
     else:
         diverging_block = placeholder("Diverging peak-hour Barchart")
 
     return html.Div(style={"padding": "20px 0", "display": "grid", "gap": "28px"},
                     children=[
-        html.P("Usage patterns across hourly, daily, and seasonal dimensions.",
-               style=NOTE),
-        html.Div([html.H3("Seasonal Heatmap",
+        # html.P("Usage patterns across hourly, daily, and seasonal dimensions.",
+        #        style=NOTE),
+        html.Div([html.H2("Seasonal Heatmap",
                           style={"margin": "0 0 8px"}), heatmap_block]),
-        html.Div([html.H3("Diverging peak-hour barchart",
+        html.Div([html.H2("Diverging peak-hour barchart",
                           style={"margin": "0 0 8px"}), diverging_block]),
     ])
 
 
 def what_tab() -> html.Div:
     return html.Div(style={"padding": "20px 0"}, children=[
-        html.P("Corridors combining high volume, peak demand, and year-round "
-               "usage.", style=NOTE),
+
+        # html.P("Corridors combining high volume, peak demand, and year-round "
+        #        "usage.", style=NOTE),
+        html.H2("Identifying corridors with high, consistent demand throughout the year.", style={"margin": "0 0 8px"}),
+
+        html.P("Each bubble is a corridor: x = year-round volume per counter, y = how much of its non-winter ridership it keeps through winter, size = peak-hour demand, colour = borough. " \
+            "Drag the two sliders to set your own thresholds — corridors clearing both are highlighted as investment candidates while the rest fade back",
+             style={**NOTE_STYLE, "margin": "0 "}),
+
         dcc.Graph(id="vis4-scatter", config=GRAPH_CONFIG),
         html.Div(style={"display": "flex", "gap": "40px",
                         "padding": "10px 0 0"}, children=[
@@ -194,7 +243,7 @@ def heatmap_borough_options():
 # --------------------------------------------------------------------------
 app.layout = html.Main(style=PAGE_STYLE, children=[
     html.H1("Evidence-Based Insights for Montréal's Cycling Network",
-            style={"fontSize": "26px", "margin": "0 0 4px"}),
+            style={"fontSize": "34px", "margin": "0 0 4px"}),
     html.P("INF8808E - Team1", style={**NOTE, "margin": "0 0 12px"}),
     dcc.Tabs(id="main-tabs", value="where", children=[
         dcc.Tab(label="Where?", value="where"),

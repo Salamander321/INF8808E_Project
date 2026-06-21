@@ -64,6 +64,9 @@ def build_borough_summary(map_data: pd.DataFrame) -> pd.DataFrame:
 
 def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.Figure:
 
+    center_lat = float(map_data["latitude"].mean())
+    center_lon = float(map_data["longitude"].mean())
+    
     if map_data.empty:
         return make_empty_map_figure(
             "Run python preprocess.py first to generate map_viz1.csv."
@@ -80,10 +83,10 @@ def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.
             locations=borough_summary["arrondissement"],
             z=borough_summary["mean_daily_volume"],
             featureidkey=f"properties.{borough_property}",
-            colorscale="Blues",
+            colorscale="Greens",
             marker_opacity=0.95,
-            marker_line_width=0.8,
-            marker_line_color="white",
+            marker_line_width=0.5,
+            marker_line_color="#6c6f71",
             colorbar={
                 "title": "Mean daily<br>volume",
             },
@@ -121,9 +124,9 @@ def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.
                 mode="markers",
                 marker={
                     "size": bubble_sizes,
-                    "opacity": 0.68,
+                    "opacity": 0.8,
                     "color": bubble_data["mean_daily_volume"],
-                    "colorscale": "Blues",
+                    "colorscale": "Greens",
                     "showscale": False,
                 },
                 customdata=bubble_data[
@@ -148,8 +151,8 @@ def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.
         },
         mapbox={
             "style": "carto-positron",
-            "center": {"lat": 45.541, "lon": -73.65},
-            "zoom": 9.75,
+            "center": {"lat": center_lat, "lon": center_lon},
+            "zoom": 9.6,
         },
         height=650,
         margin={"l": 20, "r": 20, "t": 60, "b": 20},
