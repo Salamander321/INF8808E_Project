@@ -121,10 +121,7 @@ def when_tab() -> html.Div:
                     "peaks, broader weekend activity, and locations where cycling rhythms "
                     "differ from the Montréal-wide pattern.",
                     style={**NOTE_STYLE, "margin": "6px 0 0"}),
-            html.P("Each cell is the mean hourly cyclist volume per counter for one "
-                    "day-of-week and hour combination, averaged across all dates matching "
-                    "the selected filters.",
-                    style={**NOTE_STYLE, "margin": "6px 0 0"}),
+
 
 
             html.Div(style={"display": "flex", "gap": "16px",
@@ -142,8 +139,10 @@ def when_tab() -> html.Div:
             ]),
             dcc.Graph(id="vis2-heatmap", config=GRAPH_CONFIG),
         
-        
-        
+            html.P("Each cell is the mean hourly cyclist volume per counter for one "
+                    "day-of-week and hour combination, averaged across all dates matching "
+                    "the selected filters.",
+                    style={**NOTE_STYLE, "margin": "6px 0 0"}),
         ])
     else:
         heatmap_block = placeholder("Seasonal Heatmap")
@@ -170,9 +169,7 @@ def when_tab() -> html.Div:
             ),
             dcc.Graph(id="vis3-diverging", config=GRAPH_CONFIG),
             html.P("Bars left = inbound (Sud/Est, toward downtown); bars right = outbound "
-                    "(Nord/Ouest). Directional classification approximates flow from cardinal "
-                    "direction relative to downtown Ville-Marie and may not perfectly reflect "
-                    "real movement.",
+                    "(Nord/Ouest).",
                 style={**NOTE_STYLE, "marginTop": "12px"}),
         ])
     else:
