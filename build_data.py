@@ -24,7 +24,7 @@ from const import (
 
 
 #######################################
-#### FOR DATA PREP FOR EACHH VIE W#####
+#### FOR DATA PREP FOR EACHH VIEW #####
 #######################################
 REQUIRED_COLUMNS = {
     "agg_code",
@@ -459,10 +459,6 @@ def prepare_scatter_data(df_monthly: pd.DataFrame,
     .sum()
 )
 
-    # total = (
-    #     df_monthly.groupby("corridor")["volume"].mean()
-    #     .reset_index().rename(columns={"volume": "mean_volume"})
-    # )
 
     total = (
     per_counter.groupby("corridor")["volume"].mean()
@@ -497,9 +493,7 @@ def prepare_scatter_data(df_monthly: pd.DataFrame,
     scatter_df = scatter_df.merge(n_sensors, on="corridor")
     scatter_df = scatter_df.merge(peak, on="corridor", how="left")
 
-    # scatter_df["volume_per_sensor"] = (
-    #     scatter_df["mean_volume"] / scatter_df["n_sensors"]
-    # )
+
     scatter_df["winter_retention"] = (
         winter.reindex(scatter_df["corridor"].values).values /
         summer.reindex(scatter_df["corridor"].values).values
@@ -513,16 +507,10 @@ def load_scatter_df(df_monthly: pd.DataFrame, df_hourly: pd.DataFrame, season: s
     return prepare_scatter_data(df_monthly, df_hourly, season=season)
 
 if __name__ == "__main__":
-    # print("Downloading hourly data from Montreal CKAN API...")
-    # df_hourly = download_hourly_data()
+
     print("Loading raw data from local CSV...")
     df_raw = pd.read_csv(RAW_DATA_PATH)
     aggs = split_by_agg(df_raw)
-    # aggs["h"].to_csv(HOURLY_PATH, index=False)
-    # aggs["m"].to_csv(MONTHLY_PATH, index=False)
-
-    # print(f"Hourly data saved to {HOURLY_PATH}")
-    # print(f"Monthly data saved to {MONTHLY_PATH}")
 
     print("Building map dataset...")
     map_df = build_map_data(aggs["h"])

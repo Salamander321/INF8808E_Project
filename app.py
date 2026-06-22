@@ -1,15 +1,3 @@
-# """
-# app.py — Single Dash app for the Montréal Cycling dashboard.
-
-# INF8808 structure: this is the one entry point. Each visualization lives in
-# its own figure-only module (scatter.py, heatmap.py, ...) that exposes pure
-# functions. This file builds ONE layout with three tabs (Where / When / What)
-# and registers ALL callbacks on the single `app` object.
-
-# Run via the failsafe wrapper:   python server.py   -> http://127.0.0.1:8050
-# (or directly:                   python app.py)
-# """
-
 from json import load
 
 import dash
@@ -192,8 +180,6 @@ def when_tab() -> html.Div:
 def what_tab() -> html.Div:
     return html.Div(style={"padding": "20px 0"}, children=[
 
-        # html.P("Corridors combining high volume, peak demand, and year-round "
-        #        "usage.", style=NOTE),
         html.H2("Identifying corridors with high, consistent demand throughout the year.", style={"margin": "0 0 8px"}),
 
         html.P("Each bubble is a corridor: x = year-round volume per counter, y = how much of its non-winter ridership it keeps through winter, size = peak-hour demand, colour = borough. " \

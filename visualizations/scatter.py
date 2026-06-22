@@ -58,13 +58,7 @@ def build_figure(df: pd.DataFrame, vol_thresh: float, ret_thresh: float) -> go.F
         "Peak-hour demand: %{customdata[2]:.1f}"
         "<extra></extra>"
     )
-
-    # One trace per borough holding ALL its corridors. Highlighted points
-    # render at full strength; dimmed points keep the SAME borough hue but
-    # faded (e.g. red -> light red). The fade is baked into a per-point rgba
-    # colour, while the trace's base `marker.color` stays solid so the legend
-    # swatch shows the true borough colour. Every borough appears once in the
-    # legend regardless of highlight state.
+    
     HI_ALPHA, DIM_ALPHA = 0.95, 0.22
     for b in boroughs:
         sub = df[df["arrondissement"] == b]
@@ -96,10 +90,6 @@ def build_figure(df: pd.DataFrame, vol_thresh: float, ret_thresh: float) -> go.F
         ))
 
     # --- Dynamic axis ranges -------------------------------------------------
-    # Use a robust (percentile-clipped) range so a single extreme outlier does
-    # not squash the dense cluster. The threshold line is always kept in view,
-    # and the range adapts as sliders move. Outliers beyond the clip still plot
-    # but the axis no longer stretches to fit them.
     def _range(values: pd.Series, thresh: float,
                lo_q: float = 0.0, hi_q: float = 0.97, pad_frac: float = 0.08):
         lo = min(values.quantile(lo_q), thresh)
