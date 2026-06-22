@@ -83,6 +83,11 @@ app.title = "Montréal Cycling Dashboard"
 
 GRAPH_CONFIG = {"displayModeBar": False, "responsive": True}
 
+MAP_GRAPH_CONFIG = {
+    "displayModeBar": False,
+    "responsive": True,
+    "scrollZoom": True,
+}
 
 # ---- Tab builders --------------------------------------------------------
 def where_tab() -> html.Div:
@@ -98,7 +103,7 @@ def where_tab() -> html.Div:
                 value=["on"],          # checked by default -> bubbles visible
                 style={"margin": "8px 0"},
             ),
-            dcc.Graph(id="vis1-choropleth", config=GRAPH_CONFIG),
+            dcc.Graph(id="vis1-choropleth", config=MAP_GRAPH_CONFIG),
             html.P("Cycling activity concentrates sharply in the central boroughs around Ville-Marie and Le Plateau, and " \
                 "drops off toward the periphery — a few central corridors carry a large share of the network's traffic.",
                 style={**NOTE_STYLE, "margin": "6px 0 0"}),
