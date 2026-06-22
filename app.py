@@ -93,19 +93,19 @@ MAP_GRAPH_CONFIG = {
 def where_tab() -> html.Div:
     if _HAS_MAP:
         content = html.Div([
-            html.P("Each borough is shaded by its mean daily cyclist volume per counter — darker means more cycling. " \
-                "Bubbles mark individual counting sites, sized by volume. Toggle the bubbles on or off to switch between" \
-                " borough-level patterns and corridor-level detail.",
+            html.P( "Green shades compare cycling activity across boroughs. Purple bubbles show counting sites, "
+                    "with larger bubbles indicating higher mean daily volume. Click a bubble to zoom in, "
+                    "use the mouse wheel to zoom, and drag the map to explore.",
                 style={**NOTE_STYLE, "margin": "6px 0 0"}),
             dcc.Checklist(
                 id="map-bubbles",
                 options=[{"label": "Counting sites", "value": "on"}],
-                value=["on"],          # checked by default -> bubbles visible
+                value=["on"],
                 style={"margin": "8px 0"},
             ),
             dcc.Graph(id="vis1-choropleth", config=MAP_GRAPH_CONFIG),
             html.P("Cycling activity concentrates sharply in the central boroughs around Ville-Marie and Le Plateau, and " \
-                "drops off toward the periphery — a few central corridors carry a large share of the network's traffic.",
+                "drops off toward the periphery. A few central corridors carry a large share of the network's traffic.",
                 style={**NOTE_STYLE, "margin": "6px 0 0"}),
         ])
     else:
@@ -119,8 +119,6 @@ def where_tab() -> html.Div:
 def when_tab() -> html.Div:
     if _HAS_HEATMAP:
         heatmap_block = html.Div([
-            # html.P("Mean hourly cyclist volume per counter, filtered by season and borough.",
-            #         style={**NOTE_STYLE, "margin": "0"}),
             html.P("This visualization examines when cycling demand is highest and how daily "
                     "patterns vary by season and borough. It helps identify weekday commuting "
                     "peaks, broader weekend activity, and locations where cycling rhythms "
@@ -199,7 +197,7 @@ def what_tab() -> html.Div:
         html.H2("Identifying corridors with high, consistent demand throughout the year.", style={"margin": "0 0 8px"}),
 
         html.P("Each bubble is a corridor: x = year-round volume per counter, y = how much of its non-winter ridership it keeps through winter, size = peak-hour demand, colour = borough. " \
-            "Drag the two sliders to set your own thresholds — corridors clearing both are highlighted as investment candidates while the rest fade back",
+            "Drag the two sliders to set your own thresholds; corridors clearing both are highlighted as investment candidates while the rest fade back",
              style={**NOTE_STYLE, "margin": "0 "}),
 
         dcc.Graph(id="vis4-scatter", config=GRAPH_CONFIG),
