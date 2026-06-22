@@ -266,10 +266,32 @@ def render_tab(tab):
 @app.callback(
     Output("vis1-choropleth", "figure"),
     Input("map-bubbles", "value"),
+    Input("vis1-choropleth", "clickData"),
 )
-def update_map(bubble_value):
+def update_map(bubble_value, click_data):
     show = "on" in (bubble_value or [])
-    return map.get_figure(MAP_DF, MAP_GEOJSON, show)
+
+    selected_lat = None
+    selected_lon = None
+    selected_zoom = 9.6
+
+    if click_data and click_data.get("points"):
+        point = click_data["points"][0]
+
+        # Bubble points contain lat/lon.
+        if "lat" in point and "lon" in point:
+            selected_lat = float(point["lat"])
+            selected_lon = float(point["lon"])
+            selected_zoom = 15
+
+    return map.get_figure(
+        MAP_DF,
+        MAP_GEOJSON,
+        show,
+        selected_lat=selected_lat,
+        selected_lon=selected_lon,
+        selected_zoom=selected_zoom,
+    )
 
 @app.callback(
         Output("vis2-heatmap", "figure"),

@@ -62,11 +62,21 @@ def build_borough_summary(map_data: pd.DataFrame) -> pd.DataFrame:
     return borough_summary
 
 
-def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.Figure:
-
-    center_lat = float(map_data["latitude"].mean())
-    center_lon = float(map_data["longitude"].mean())
+def get_figure(
+    map_data: pd.DataFrame,
+    geojson: dict,
+    show_bubbles: bool,
+    selected_lat: float | None = None,
+    selected_lon: float | None = None,
+    selected_zoom: float = 9.6,
+) -> go.Figure:
     
+    default_lat = float(map_data["latitude"].mean())
+    default_lon = float(map_data["longitude"].mean())
+
+    center_lat = selected_lat if selected_lat is not None else default_lat
+    center_lon = selected_lon if selected_lon is not None else default_lon
+
     if map_data.empty:
         return make_empty_map_figure(
             "Run python preprocess.py first to generate map_viz1.csv."
@@ -84,7 +94,7 @@ def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.
             z=borough_summary["mean_daily_volume"],
             featureidkey=f"properties.{borough_property}",
             colorscale="Greens",
-            marker_opacity=0.95,
+            marker_opacity=0.75,
             marker_line_width=0.5,
             marker_line_color="#6c6f71",
             colorbar={
@@ -126,7 +136,7 @@ def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.
                     "size": bubble_sizes,
                     "opacity": 0.8,
                     "color": bubble_data["mean_daily_volume"],
-                    "colorscale": "Greens",
+                    "color": "#6a3d9a",
                     "showscale": False,
                 },
                 customdata=bubble_data[
@@ -152,7 +162,7 @@ def get_figure(map_data: pd.DataFrame, geojson: dict, show_bubbles: bool) -> go.
         mapbox={
             "style": "carto-positron",
             "center": {"lat": center_lat, "lon": center_lon},
-            "zoom": 9.6,
+            "zoom": selected_zoom,
         },
         height=650,
         margin={"l": 20, "r": 20, "t": 60, "b": 20},
