@@ -4,18 +4,23 @@ import dash
 from dash import Input, Output, dcc, html
 import load_data
 
-import visualizations.scatter as scatter            
+
+import visualizations.scatter as scatter
 import visualizations.heatmap as heatmap          
 import visualizations.map as map         #
 import visualizations.diverging as diverging         
-          # noqa: BLE001
 
+
+#------------------------------------------
+# CONST FOR DEBUGGING 
+#------------------------------------------
+_HAS_SCATTER = True
 _HAS_DIVERGING = True
 _HAS_HEATMAP = True
 _HAS_MAP = True
 
 # --------------------------------------------------------------------------
-# Data — loaded once at startup, shared across the app.
+# Data — loaded once at startup
 # --------------------------------------------------------------------------
 MAP_DF = load_data.load_map_data()
 MAP_GEOJSON = load_data.load_borough_geojson()

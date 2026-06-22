@@ -1,3 +1,8 @@
+"""
+File for defining constants
+"""
+
+
 from pathlib import Path
 
 

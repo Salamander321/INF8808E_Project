@@ -1,3 +1,7 @@
+"""
+File for building datasets for each visualization from the raw data.
+"""
+
 from pathlib import Path
 
 import pandas as pd
@@ -20,24 +24,11 @@ from const import (
     OUTBOUND_DIRECTIONS,
     AM_PEAK_HOURS,
     PM_PEAK_HOURS,
+    REQUIRED_COLUMNS,
 )
 
 
-#######################################
-#### FOR DATA PREP FOR EACHH VIEW #####
-#######################################
-REQUIRED_COLUMNS = {
-    "agg_code",
-    "instance",
-    "longitude",
-    "latitude",
-    "arrondissement",
-    "rue_1",
-    "rue_2",
-    "periode",
-    "volume",
-}
-######################################
+##################################
 ###### GLOBAL FUNCTIONS ##############
 ######################################
 
